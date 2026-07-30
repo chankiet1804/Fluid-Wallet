@@ -35,6 +35,10 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
 
+  # Token and chain icons ship as SVG. Pinned exactly, like every other
+  # dependency here.
+  flutter_svg: 2.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -56,6 +60,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Branded SVGs from github.com/0xa3k5/web3icons (MIT, see assets/icons/LICENCE).
+  assets:
+    - assets/icons/networks/
+    - assets/icons/tokens/
 
   # Static weights are bundled deliberately instead of variable fonts or the
   # google_fonts package: no runtime network fetch, explicit weight mapping.

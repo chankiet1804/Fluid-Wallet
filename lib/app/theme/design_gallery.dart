@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'app_dimens.dart';
 import 'app_format.dart';
@@ -34,6 +35,12 @@ class DesignGallery extends StatelessWidget {
             SizedBox(height: AppDimens.space32),
             _Section('QR surface'),
             _QrSurfaceProof(),
+            SizedBox(height: AppDimens.space32),
+            _Section('Chain icons'),
+            _IconGrid(_IconGrid.networks),
+            SizedBox(height: AppDimens.space32),
+            _Section('Token icons'),
+            _IconGrid(_IconGrid.tokens),
             SizedBox(height: AppDimens.space32),
             _Section('Spacing'),
             _SpacingScale(),
@@ -254,6 +261,78 @@ class _QrSurfaceProof extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDimens.radiusMd),
       ),
       child: Icon(Icons.qr_code_2, size: 88, color: context.colors.onQrSurface),
+    );
+  }
+}
+
+/// Renders bundled SVG icons so a broken or invisible-on-dark asset shows up by
+/// eye instead of at runtime on a wallet screen.
+class _IconGrid extends StatelessWidget {
+  const _IconGrid(this.assets);
+
+  static const iconSize = 40.0;
+  static const tileSize = 72.0;
+
+  static const networks = <String>[
+    'assets/icons/networks/ethereum.svg',
+    'assets/icons/networks/base.svg',
+    'assets/icons/networks/arbitrum-one.svg',
+    'assets/icons/networks/optimism.svg',
+    'assets/icons/networks/polygon.svg',
+    'assets/icons/networks/binance-smart-chain.svg',
+  ];
+
+  static const tokens = <String>[
+    'assets/icons/tokens/eth.svg',
+    'assets/icons/tokens/usdt.svg',
+    'assets/icons/tokens/usdc.svg',
+    'assets/icons/tokens/bnb.svg',
+    'assets/icons/tokens/arb.svg',
+    'assets/icons/tokens/op.svg',
+    'assets/icons/tokens/pol.svg',
+    'assets/icons/tokens/matic.svg',
+  ];
+
+  final List<String> assets;
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      spacing: AppDimens.space16,
+      runSpacing: AppDimens.space16,
+      children: [
+        for (final asset in assets)
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: tileSize,
+                height: tileSize,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: context.colors.surface,
+                  borderRadius: BorderRadius.circular(AppDimens.radiusSm),
+                ),
+                child: SvgPicture.asset(
+                  asset,
+                  width: iconSize,
+                  height: iconSize,
+                ),
+              ),
+              const SizedBox(height: AppDimens.space4),
+              SizedBox(
+                width: tileSize,
+                child: Text(
+                  asset.split('/').last.replaceAll('.svg', ''),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  style: context.typo.caption
+                      .copyWith(color: context.colors.textSecondary),
+                ),
+              ),
+            ],
+          ),
+      ],
     );
   }
 }
