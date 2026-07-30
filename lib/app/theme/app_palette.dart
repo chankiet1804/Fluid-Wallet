@@ -17,6 +17,10 @@ abstract final class AppPalette {
   static const blue500 = Color(0xFF366FFF); // Figma: Blue (to fluid action)
   static const blue600 = Color(0xFF2A5AD9);
 
+  // Onboarding hero glow. Measured by eye from the raster design.
+  static const violet600 = Color(0xFF34215E);
+  static const navy700 = Color(0xFF141E3A);
+
   // Text
   static const white = Color(0xFFFFFFFF);
   static const grey400 = Color(0xFF8B95A7);

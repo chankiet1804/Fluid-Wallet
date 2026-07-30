@@ -60,6 +60,27 @@ void main() {
     test('address style is monospace', () {
       expect(AppTypography.standard.address.fontFamily, 'JetBrainsMono');
     });
+
+    // A hero title renders words, not amounts — tabular figures here would
+    // only widen the spacing for nothing.
+    test('displayMedium is a text style, not a numeric one', () {
+      final style = AppTypography.standard.displayMedium;
+
+      expect(style.fontSize, 32);
+      expect(style.fontFeatures ?? const [], isEmpty);
+    });
+  });
+
+  group('AppColors', () {
+    // Guards against a copy-paste that leaves the glow equal to the backdrop,
+    // which would silently flatten the onboarding gradient.
+    test('hero glow tokens differ from the background', () {
+      const c = AppColors.dark;
+
+      expect(c.heroGlowPrimary, isNot(c.background));
+      expect(c.heroGlowSecondary, isNot(c.background));
+      expect(c.heroGlowPrimary, isNot(c.heroGlowSecondary));
+    });
   });
 
   group('AppFormat.shortAddress', () {

@@ -27,6 +27,8 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.warningSurface,
     required this.qrSurface,
     required this.onQrSurface,
+    required this.heroGlowPrimary,
+    required this.heroGlowSecondary,
   });
 
   /// Screen background.
@@ -68,6 +70,12 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color qrSurface;
   final Color onQrSurface;
 
+  /// Onboarding hero backdrop. The feature layer composes these into a
+  /// gradient — kept as two role-named colors so a light theme swaps values
+  /// without touching the layout.
+  final Color heroGlowPrimary;
+  final Color heroGlowSecondary;
+
   static const dark = AppColors(
     background: AppPalette.dark900,
     surface: AppPalette.dark800,
@@ -87,6 +95,8 @@ class AppColors extends ThemeExtension<AppColors> {
     warningSurface: Color(0x1FF5A524),
     qrSurface: AppPalette.white,
     onQrSurface: AppPalette.black,
+    heroGlowPrimary: AppPalette.violet600,
+    heroGlowSecondary: AppPalette.navy700,
   );
 
   @override
@@ -109,6 +119,8 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? warningSurface,
     Color? qrSurface,
     Color? onQrSurface,
+    Color? heroGlowPrimary,
+    Color? heroGlowSecondary,
   }) {
     return AppColors(
       background: background ?? this.background,
@@ -129,6 +141,8 @@ class AppColors extends ThemeExtension<AppColors> {
       warningSurface: warningSurface ?? this.warningSurface,
       qrSurface: qrSurface ?? this.qrSurface,
       onQrSurface: onQrSurface ?? this.onQrSurface,
+      heroGlowPrimary: heroGlowPrimary ?? this.heroGlowPrimary,
+      heroGlowSecondary: heroGlowSecondary ?? this.heroGlowSecondary,
     );
   }
 
@@ -154,6 +168,9 @@ class AppColors extends ThemeExtension<AppColors> {
       warningSurface: Color.lerp(warningSurface, other.warningSurface, t)!,
       qrSurface: Color.lerp(qrSurface, other.qrSurface, t)!,
       onQrSurface: Color.lerp(onQrSurface, other.onQrSurface, t)!,
+      heroGlowPrimary: Color.lerp(heroGlowPrimary, other.heroGlowPrimary, t)!,
+      heroGlowSecondary:
+          Color.lerp(heroGlowSecondary, other.heroGlowSecondary, t)!,
     );
   }
 }

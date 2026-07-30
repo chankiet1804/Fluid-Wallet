@@ -36,8 +36,11 @@ class DesignGallery extends StatelessWidget {
             _Section('QR surface'),
             _QrSurfaceProof(),
             SizedBox(height: AppDimens.space32),
+            _Section('Brand mark'),
+            _IconGrid(_IconGrid.brand),
+            SizedBox(height: AppDimens.space32),
             _Section('Chain icons'),
-            _IconGrid(_IconGrid.networks),
+            _IconGrid(_IconGrid.networks, circular: true),
             SizedBox(height: AppDimens.space32),
             _Section('Token icons'),
             _IconGrid(_IconGrid.tokens),
@@ -89,6 +92,8 @@ class _ColorSwatches extends StatelessWidget {
       ('warning', c.warning),
       ('warningSurface', c.warningSurface),
       ('qrSurface', c.qrSurface),
+      ('heroGlowPrimary', c.heroGlowPrimary),
+      ('heroGlowSecondary', c.heroGlowSecondary),
     ];
 
     return Column(
@@ -144,6 +149,7 @@ class _TypeScale extends StatelessWidget {
     const sample = 'Số dư ví của bạn — Gửi tiền đã xác nhận';
     final entries = <(String, TextStyle)>[
       ('balanceLarge', t.balanceLarge),
+      ('displayMedium', t.displayMedium),
       ('numericInput', t.numericInput),
       ('titleLarge', t.titleLarge),
       ('titleMedium', t.titleMedium),
@@ -268,10 +274,12 @@ class _QrSurfaceProof extends StatelessWidget {
 /// Renders bundled SVG icons so a broken or invisible-on-dark asset shows up by
 /// eye instead of at runtime on a wallet screen.
 class _IconGrid extends StatelessWidget {
-  const _IconGrid(this.assets);
+  const _IconGrid(this.assets, {this.circular = false});
 
   static const iconSize = 40.0;
   static const tileSize = 72.0;
+
+  static const brand = <String>['assets/icons/brand/fluid.svg'];
 
   static const networks = <String>[
     'assets/icons/networks/ethereum.svg',
@@ -280,6 +288,11 @@ class _IconGrid extends StatelessWidget {
     'assets/icons/networks/optimism.svg',
     'assets/icons/networks/polygon.svg',
     'assets/icons/networks/binance-smart-chain.svg',
+    'assets/icons/networks/avalanche.svg',
+    'assets/icons/networks/sonic.svg',
+    'assets/icons/networks/ronin.svg',
+    'assets/icons/networks/lycan.svg',
+    'assets/icons/networks/swell.svg',
   ];
 
   static const tokens = <String>[
@@ -294,6 +307,15 @@ class _IconGrid extends StatelessWidget {
   ];
 
   final List<String> assets;
+
+  /// Clip to a circle, matching how the `background` variant is rendered on
+  /// screen — those assets carry a full-bleed square backdrop.
+  final bool circular;
+
+  Widget _icon(String asset) {
+    final svg = SvgPicture.asset(asset, width: iconSize, height: iconSize);
+    return circular ? ClipOval(child: svg) : svg;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -313,11 +335,7 @@ class _IconGrid extends StatelessWidget {
                   color: context.colors.surface,
                   borderRadius: BorderRadius.circular(AppDimens.radiusSm),
                 ),
-                child: SvgPicture.asset(
-                  asset,
-                  width: iconSize,
-                  height: iconSize,
-                ),
+                child: _icon(asset),
               ),
               const SizedBox(height: AppDimens.space4),
               SizedBox(

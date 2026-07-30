@@ -14,6 +14,7 @@ class AppTypography extends ThemeExtension<AppTypography> {
     required this.amountMedium,
     required this.numericInput,
     required this.address,
+    required this.displayMedium,
     required this.titleLarge,
     required this.titleMedium,
     required this.bodyLarge,
@@ -33,6 +34,10 @@ class AppTypography extends ThemeExtension<AppTypography> {
 
   /// Wallet addresses and transaction hashes. No exceptions.
   final TextStyle address;
+
+  /// Hero titles on onboarding screens. Not a numeric style — no tabular
+  /// figures.
+  final TextStyle displayMedium;
 
   /// Screen titles.
   final TextStyle titleLarge;
@@ -87,6 +92,13 @@ class AppTypography extends ThemeExtension<AppTypography> {
       fontWeight: FontWeight.w400,
       letterSpacing: 0.2,
     ),
+    displayMedium: TextStyle(
+      fontFamily: _sans,
+      fontSize: 32,
+      height: 1.2,
+      fontWeight: FontWeight.w700,
+      letterSpacing: -0.5,
+    ),
     titleLarge: TextStyle(
       fontFamily: _sans,
       fontSize: 20,
@@ -129,6 +141,7 @@ class AppTypography extends ThemeExtension<AppTypography> {
   TextTheme toTextTheme() {
     return TextTheme(
       displayLarge: balanceLarge,
+      displayMedium: displayMedium,
       headlineMedium: numericInput,
       titleLarge: titleLarge,
       titleMedium: titleMedium,
@@ -145,6 +158,7 @@ class AppTypography extends ThemeExtension<AppTypography> {
     TextStyle? amountMedium,
     TextStyle? numericInput,
     TextStyle? address,
+    TextStyle? displayMedium,
     TextStyle? titleLarge,
     TextStyle? titleMedium,
     TextStyle? bodyLarge,
@@ -157,6 +171,7 @@ class AppTypography extends ThemeExtension<AppTypography> {
       amountMedium: amountMedium ?? this.amountMedium,
       numericInput: numericInput ?? this.numericInput,
       address: address ?? this.address,
+      displayMedium: displayMedium ?? this.displayMedium,
       titleLarge: titleLarge ?? this.titleLarge,
       titleMedium: titleMedium ?? this.titleMedium,
       bodyLarge: bodyLarge ?? this.bodyLarge,
@@ -174,6 +189,7 @@ class AppTypography extends ThemeExtension<AppTypography> {
       amountMedium: TextStyle.lerp(amountMedium, other.amountMedium, t)!,
       numericInput: TextStyle.lerp(numericInput, other.numericInput, t)!,
       address: TextStyle.lerp(address, other.address, t)!,
+      displayMedium: TextStyle.lerp(displayMedium, other.displayMedium, t)!,
       titleLarge: TextStyle.lerp(titleLarge, other.titleLarge, t)!,
       titleMedium: TextStyle.lerp(titleMedium, other.titleMedium, t)!,
       bodyLarge: TextStyle.lerp(bodyLarge, other.bodyLarge, t)!,

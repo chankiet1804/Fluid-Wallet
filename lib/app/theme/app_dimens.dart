@@ -7,9 +7,13 @@ abstract final class AppDimens {
   static const space20 = 20.0;
   static const space24 = 24.0;
   static const space32 = 32.0;
+  static const space40 = 40.0;
 
   /// Horizontal screen padding, measured from the design.
   static const screenPadding = space20;
+
+  /// Full-width action buttons.
+  static const buttonHeight = 56.0;
 
   static const radiusSm = 12.0;
   static const radiusMd = 16.0;

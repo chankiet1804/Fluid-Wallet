@@ -63,6 +63,7 @@ flutter:
 
   # Branded SVGs from github.com/0xa3k5/web3icons (MIT, see assets/icons/LICENCE).
   assets:
+    - assets/icons/brand/
     - assets/icons/networks/
     - assets/icons/tokens/
 

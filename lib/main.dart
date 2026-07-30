@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'app/theme/app_theme.dart';
-import 'app/theme/design_gallery.dart';
+import 'features/onboarding/get_started/get_started.dart';
 
 void main() {
   runApp(const FluidWalletApp());
@@ -16,9 +16,9 @@ class FluidWalletApp extends StatelessWidget {
       title: 'Fluid Wallet',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
-      // Placeholder home until routing lands — the gallery is how the tokens
-      // get checked by eye.
-      home: const DesignGallery(),
+      // Placeholder home until routing lands. To eyeball the design tokens,
+      // temporarily swap this for `DesignGallery` from app/theme.
+      home: const GetStartedScreen(),
     );
   }
 }
