@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../shared/widgets/wallet_avatar.dart';
 import 'app_dimens.dart';
 import 'app_format.dart';
 import 'theme_context.dart';
@@ -38,6 +39,9 @@ class DesignGallery extends StatelessWidget {
             SizedBox(height: AppDimens.space32),
             _Section('Brand mark'),
             _IconGrid(_IconGrid.brand),
+            SizedBox(height: AppDimens.space32),
+            _Section('Wallet avatars'),
+            _AvatarProof(),
             SizedBox(height: AppDimens.space32),
             _Section('Chain icons'),
             _IconGrid(_IconGrid.networks, circular: true),
@@ -120,8 +124,9 @@ class _ColorSwatches extends StatelessWidget {
                       Text(name, style: context.typo.bodyMedium),
                       Text(
                         _hex(color),
-                        style: context.typo.caption
-                            .copyWith(color: c.textSecondary),
+                        style: context.typo.caption.copyWith(
+                          color: c.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -172,8 +177,9 @@ class _TypeScale extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: context.typo.caption
-                      .copyWith(color: context.colors.textSecondary),
+                  style: context.typo.caption.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
                 ),
                 const SizedBox(height: AppDimens.space4),
                 Text(sample, style: style),
@@ -225,8 +231,9 @@ class _TabularFiguresProofState extends State<_TabularFiguresProof> {
         const SizedBox(height: AppDimens.space8),
         Text(
           'Chữ số phải đứng yên khi giá trị đổi',
-          style:
-              context.typo.caption.copyWith(color: context.colors.textSecondary),
+          style: context.typo.caption.copyWith(
+            color: context.colors.textSecondary,
+          ),
         ),
       ],
     );
@@ -267,6 +274,37 @@ class _QrSurfaceProof extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDimens.radiusMd),
       ),
       child: Icon(Icons.qr_code_2, size: 88, color: context.colors.onQrSurface),
+    );
+  }
+}
+
+/// Blockies identicons at the sizes they appear on screen. Two addresses that
+/// differ in one character must read as clearly different avatars — if they
+/// don't, the avatar is useless as a wrong-account signal.
+class _AvatarProof extends StatelessWidget {
+  const _AvatarProof();
+
+  static const _addresses = <String>[
+    '0x6a5561eD5aD01030C904e0E5921Ebf17878F9F70',
+    '0x0d42b40d95f4a9F9e677B743643c694fE8f7b908',
+    '0x7f3b2c1d4e5f60718293a4b5c6d7e8f9a0b1c2d3',
+    '0xd8da6bf26964af9d7eed9e03e53415d37aa96045',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          spacing: AppDimens.space16,
+          runSpacing: AppDimens.space16,
+          children: [
+            for (final address in _addresses)
+              WalletAvatar(address: address, size: 56),
+          ],
+        ),
+      ],
     );
   }
 }
@@ -344,8 +382,9 @@ class _IconGrid extends StatelessWidget {
                   asset.split('/').last.replaceAll('.svg', ''),
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
-                  style: context.typo.caption
-                      .copyWith(color: context.colors.textSecondary),
+                  style: context.typo.caption.copyWith(
+                    color: context.colors.textSecondary,
+                  ),
                 ),
               ),
             ],
@@ -382,8 +421,9 @@ class _SpacingScale extends StatelessWidget {
                   width: 80,
                   child: Text(
                     name,
-                    style: context.typo.caption
-                        .copyWith(color: context.colors.textSecondary),
+                    style: context.typo.caption.copyWith(
+                      color: context.colors.textSecondary,
+                    ),
                   ),
                 ),
                 Container(

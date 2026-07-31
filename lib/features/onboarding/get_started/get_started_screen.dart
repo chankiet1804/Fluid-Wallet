@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -48,57 +49,93 @@ class GetStartedScreen extends StatelessWidget {
               ),
             ),
             child: SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppDimens.screenPadding,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Expanded(
-                      flex: 3,
-                      // The glow centre sits below the middle of this box, so
-                      // the logo may hang a few pixels past it — never clip.
-                      child: Stack(
-                        fit: StackFit.expand,
-                        clipBehavior: Clip.none,
-                        children: [
-                          ChainArc(crestY: logoCenterY),
-                          Positioned(
-                            top: logoCenterY - _AppLogo.size / 2,
-                            left: 0,
-                            right: 0,
-                            child: const Center(child: _AppLogo()),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppDimens.screenPadding,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          // The glow centre sits below the middle of this box,
+                          // so the logo may hang a few pixels past it — never
+                          // clip.
+                          child: Stack(
+                            fit: StackFit.expand,
+                            clipBehavior: Clip.none,
+                            children: [
+                              ChainArc(crestY: logoCenterY),
+                              Positioned(
+                                top: logoCenterY - _AppLogo.size / 2,
+                                left: 0,
+                                right: 0,
+                                child: const Center(child: _AppLogo()),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(height: AppDimens.space32),
+                        Text(
+                          'Fluid Wallet',
+                          textAlign: TextAlign.center,
+                          style: context.typo.displayMedium,
+                        ),
+                        const Expanded(child: SizedBox.shrink()),
+                        PrimaryButton(
+                          label: 'Create wallet',
+                          onPressed: () => context.push(AppRoute.createWallet),
+                        ),
+                        const SizedBox(height: AppDimens.space12),
+                        SecondaryButton(
+                          label: 'Add an existing wallet',
+                          onPressed: () => context.push(AppRoute.importWallet),
+                        ),
+                        const SizedBox(height: AppDimens.space24),
+                        const _LegalLinks(),
+                        const SizedBox(height: AppDimens.space16),
+                      ],
                     ),
-                    const SizedBox(height: AppDimens.space32),
-                    Text(
-                      'Fluid Wallet',
-                      textAlign: TextAlign.center,
-                      style: context.typo.displayMedium,
+                  ),
+                  // Overlay, not a Column child: anything above the hero box
+                  // would shift the glow/logo alignment.
+                  if (kDebugMode)
+                    const Positioned(
+                      top: 0,
+                      right: AppDimens.space8,
+                      child: _DesignGalleryButton(),
                     ),
-                    const Expanded(child: SizedBox.shrink()),
-                    PrimaryButton(
-                      label: 'Create wallet',
-                      onPressed: () => context.push(AppRoute.createWallet),
-                    ),
-                    const SizedBox(height: AppDimens.space12),
-                    SecondaryButton(
-                      label: 'Add an existing wallet',
-                      onPressed: () => context.push(AppRoute.importWallet),
-                    ),
-                    const SizedBox(height: AppDimens.space24),
-                    const _LegalLinks(),
-                    const SizedBox(height: AppDimens.space16),
-                  ],
-                ),
+                ],
               ),
             ),
           );
         },
       ),
+    );
+  }
+}
+
+/// Debug-only shortcut into [AppRoute.designGallery]. The route itself is only
+/// registered in debug builds, so this never ships.
+class _DesignGalleryButton extends StatelessWidget {
+  const _DesignGalleryButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return IconButton(
+      onPressed: () => context.push(AppRoute.designGallery),
+      tooltip: 'Design gallery',
+      visualDensity: VisualDensity.compact,
+      iconSize: AppDimens.space20,
+      style: IconButton.styleFrom(
+        backgroundColor: colors.surface,
+        foregroundColor: colors.textSecondary,
+      ),
+      icon: const Icon(Icons.palette_outlined),
     );
   }
 }

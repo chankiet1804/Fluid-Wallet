@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,6 +9,7 @@ import '../features/onboarding/get_started/get_started.dart';
 import '../features/onboarding/import_wallet/import_wallet_screen.dart';
 import '../features/onboarding/verify_phrase/verify_phrase_screen.dart';
 import '../features/wallet/portfolio/portfolio_screen.dart';
+import 'theme/design_gallery.dart';
 
 abstract final class AppRoute {
   static const getStarted = '/';
@@ -16,6 +18,9 @@ abstract final class AppRoute {
   static const verifyPhrase = '/backup/verify';
   static const importWallet = '/import';
   static const portfolio = '/wallet';
+
+  /// Dev-only, registered and reachable in debug builds only.
+  static const designGallery = '/design-gallery';
 }
 
 /// Routes carry ids, never secrets. A mnemonic or passcode in a path or query
@@ -64,6 +69,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoute.portfolio,
         builder: (context, state) => const PortfolioScreen(),
       ),
+      if (kDebugMode)
+        GoRoute(
+          path: AppRoute.designGallery,
+          builder: (context, state) => const DesignGallery(),
+        ),
     ],
   );
 });
