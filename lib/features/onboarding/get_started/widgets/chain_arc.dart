@@ -19,7 +19,6 @@ class ChainArc extends StatefulWidget {
   /// carry their own brand colour now, so two dark ones in a row read as a gap.
   static const _assets = <String>[
     'assets/icons/networks/ethereum.svg',
-    'assets/icons/networks/base.svg',
     'assets/icons/networks/avalanche.svg',
     'assets/icons/networks/arbitrum-one.svg',
     'assets/icons/networks/sonic.svg',

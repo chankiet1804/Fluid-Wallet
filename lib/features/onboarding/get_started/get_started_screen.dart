@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router.dart';
 import '../../../app/theme/theme.dart';
 import '../../../shared/widgets/widgets.dart';
 import 'widgets/chain_arc.dart';
@@ -78,12 +80,14 @@ class GetStartedScreen extends StatelessWidget {
                       style: context.typo.displayMedium,
                     ),
                     const Expanded(child: SizedBox.shrink()),
-                    // TODO: wire to wallet creation / import once Phase 1 lands.
-                    PrimaryButton(label: 'Create wallet', onPressed: () {}),
+                    PrimaryButton(
+                      label: 'Create wallet',
+                      onPressed: () => context.push(AppRoute.createWallet),
+                    ),
                     const SizedBox(height: AppDimens.space12),
                     SecondaryButton(
                       label: 'Add an existing wallet',
-                      onPressed: () {},
+                      onPressed: () => context.push(AppRoute.importWallet),
                     ),
                     const SizedBox(height: AppDimens.space24),
                     const _LegalLinks(),
@@ -103,7 +107,7 @@ class _AppLogo extends StatelessWidget {
   const _AppLogo();
 
   static const size = 96.0;
-  static const _glyphSize = 74.0;
+  static const _glyphSize = 84.0;
 
   @override
   Widget build(BuildContext context) {

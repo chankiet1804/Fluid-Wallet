@@ -1,24 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'app/router.dart';
 import 'app/theme/app_theme.dart';
-import 'features/onboarding/get_started/get_started.dart';
 
 void main() {
-  runApp(const FluidWalletApp());
+  // The secure storage plugin talks over a MethodChannel, so the binding has to
+  // exist before anything reads a wallet.
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ProviderScope(child: FluidWalletApp()));
 }
 
-class FluidWalletApp extends StatelessWidget {
+class FluidWalletApp extends ConsumerWidget {
   const FluidWalletApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
       title: 'Fluid Wallet',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
-      // Placeholder home until routing lands. To eyeball the design tokens,
-      // temporarily swap this for `DesignGallery` from app/theme.
-      home: const GetStartedScreen(),
+      // To eyeball the design tokens, temporarily swap this for a MaterialApp
+      // with `DesignGallery` from app/theme as its home.
+      routerConfig: ref.watch(routerProvider),
     );
   }
 }
