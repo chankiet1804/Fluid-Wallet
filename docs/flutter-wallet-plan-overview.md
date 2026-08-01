@@ -215,12 +215,15 @@ lib/
     db/           drift schema
   features/
     onboarding/   create_wallet, backup_phrase, verify_phrase, import_wallet
-    wallet/       portfolio (home), token_detail
+    wallet/       main_shell (bottom nav 4 tab), portfolio (home), token_detail
     send/         amount, recipient, contacts, review, result
     receive/      qr, share
     swap/         quote, select_token, slippage, review, result
     history/      list, detail
     settings/     security, currency, language, about
+    borrow/       placeholder tab (chưa có nội dung)
+    lending/      placeholder tab (chưa có nội dung)
+    statistics/   placeholder tab (chưa có nội dung)
   shared/         widgets/, extensions/
 ```
 
