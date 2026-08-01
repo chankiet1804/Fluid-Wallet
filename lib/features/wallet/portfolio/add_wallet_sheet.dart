@@ -3,29 +3,18 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../app/theme/theme.dart';
+import '../../../shared/widgets/widgets.dart';
 import '../../onboarding/import_wallet/import_phrase_form.dart';
 
 /// Asks whether the new wallet is generated or imported, then hands off to the
 /// same two flows onboarding uses.
 Future<void> showAddWalletSheet(BuildContext context) {
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) => const AddWalletSheet(),
-  );
+  return showAppSheet<void>(context, (_) => const AddWalletSheet());
 }
 
 /// Hosts the onboarding import form in a sheet.
 Future<void> showImportWalletSheet(BuildContext context) {
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    backgroundColor: Colors.transparent,
-    builder: (_) => const ImportWalletSheet(),
-  );
+  return showAppSheet<void>(context, (_) => const ImportWalletSheet());
 }
 
 class AddWalletSheet extends StatelessWidget {
@@ -47,7 +36,7 @@ class AddWalletSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _SheetShell(
+    return AppSheet(
       title: 'Add wallet',
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -81,91 +70,13 @@ class ImportWalletSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return _SheetShell(
+    return AppSheet(
       title: 'Import wallet',
       // Lifts the form clear of the keyboard, which would otherwise cover the
       // import button on every phone.
       bottomInset: MediaQuery.viewInsetsOf(context).bottom,
       child: ImportPhraseForm(
         onImported: () => Navigator.of(context).pop(),
-      ),
-    );
-  }
-}
-
-/// Shared frame for both sheets — same surface, corner radius and close
-/// affordance as the wallet switcher.
-class _SheetShell extends StatelessWidget {
-  const _SheetShell({
-    required this.title,
-    required this.child,
-    this.bottomInset = 0,
-  });
-
-  final String title;
-  final Widget child;
-  final double bottomInset;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(AppDimens.radiusSheet),
-        ),
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimens.screenPadding,
-                AppDimens.space16,
-                AppDimens.space12,
-                0,
-              ),
-              child: Row(
-                children: [
-                  Expanded(child: Text(title, style: context.typo.titleMedium)),
-                  Material(
-                    color: colors.surfaceElevated,
-                    shape: const CircleBorder(),
-                    clipBehavior: Clip.antiAlias,
-                    child: InkWell(
-                      onTap: () => Navigator.of(context).pop(),
-                      child: Padding(
-                        padding: const EdgeInsets.all(AppDimens.space4),
-                        child: Icon(
-                          Icons.close,
-                          size: 20,
-                          color: colors.textSecondary,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Flexible(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.fromLTRB(
-                  AppDimens.screenPadding,
-                  AppDimens.space16,
-                  AppDimens.screenPadding,
-                  bottomInset,
-                ),
-                child: child,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -18,15 +18,7 @@ String walletDisplayName(WalletMeta wallet, int index) =>
 /// Opens the wallet switcher. Drag-to-dismiss and tap-outside are the sheet
 /// defaults, so both are left alone.
 Future<void> showWalletSwitcherSheet(BuildContext context) {
-  return showModalBottomSheet<void>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    // The sheet paints its own surface; the Material default would show a
-    // second, differently coloured layer behind the rounded corners.
-    backgroundColor: Colors.transparent,
-    builder: (_) => const WalletSwitcherSheet(),
-  );
+  return showAppSheet<void>(context, (_) => const WalletSwitcherSheet());
 }
 
 /// Current wallet on top, the others below it, and the destructive action for
@@ -49,89 +41,25 @@ class WalletSwitcherSheet extends ConsumerWidget {
     final others = indexed.where((entry) => entry.$2.id != current.id).toList();
     final currentIndex = state.wallets.indexWhere((w) => w.id == current.id);
 
-    return Container(
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: const BorderRadius.vertical(
-          top: Radius.circular(AppDimens.radiusSheet),
-        ),
-      ),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const _CloseRow(),
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(
-                  AppDimens.screenPadding,
-                  0,
-                  AppDimens.screenPadding,
-                  AppDimens.space24,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _CurrentWalletHeader(
-                      wallet: current,
-                      name: walletDisplayName(current, currentIndex),
-                    ),
-                    const SizedBox(height: AppDimens.space24),
-                    Text(
-                      'Fluid Wallets',
-                      style: context.typo.caption.copyWith(
-                        color: colors.textTertiary,
-                      ),
-                    ),
-                    const SizedBox(height: AppDimens.space8),
-                    for (final (index, wallet) in others)
-                      _WalletRow(
-                        wallet: wallet,
-                        name: walletDisplayName(wallet, index),
-                      ),
-                    const _AddWalletRow(),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _CloseRow extends StatelessWidget {
-  const _CloseRow();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppDimens.screenPadding,
-        AppDimens.space12,
-        AppDimens.space12,
-        0,
-      ),
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Material(
-          color: colors.surfaceElevated,
-          shape: const CircleBorder(),
-          clipBehavior: Clip.antiAlias,
-          child: InkWell(
-            onTap: () => Navigator.of(context).pop(),
-            child: Padding(
-              padding: const EdgeInsets.all(AppDimens.space4),
-              child: Icon(Icons.close, size: 20, color: colors.textSecondary),
-            ),
+    return AppSheet(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _CurrentWalletHeader(
+            wallet: current,
+            name: walletDisplayName(current, currentIndex),
           ),
-        ),
+          const SizedBox(height: AppDimens.space24),
+          Text(
+            'Fluid Wallets',
+            style: context.typo.caption.copyWith(color: colors.textTertiary),
+          ),
+          const SizedBox(height: AppDimens.space8),
+          for (final (index, wallet) in others)
+            _WalletRow(wallet: wallet, name: walletDisplayName(wallet, index)),
+          const _AddWalletRow(),
+          const SizedBox(height: AppDimens.space24),
+        ],
       ),
     );
   }
@@ -150,11 +78,22 @@ class _CurrentWalletHeader extends ConsumerWidget {
   /// sit on top of that screen. The notifier is captured up front because this
   /// widget is gone by the time the delete runs.
   Future<void> _delete(BuildContext context, WidgetRef ref) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (_) => _DeleteDialog(name: name, isBackedUp: wallet.isBackedUp),
+    final confirmed = await showAppConfirmSheet(
+      context,
+      tone: AppSheetTone.danger,
+      icon: Icons.delete_outline,
+      title: 'Delete $name?',
+      message: wallet.isBackedUp
+          ? 'This removes the wallet and its recovery phrase from this phone. '
+                'You can import it again with the phrase you wrote down — '
+                'without it, the funds are gone for good.'
+          : 'This wallet has no confirmed backup. Deleting it removes the only '
+                'copy of its recovery phrase, and any funds it holds become '
+                'unreachable forever.',
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
     );
-    if (confirmed != true || !context.mounted) return;
+    if (!confirmed || !context.mounted) return;
 
     final controller = ref.read(walletControllerProvider.notifier);
     Navigator.of(context).pop();
@@ -310,49 +249,6 @@ class _AddressLine extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.all(AppDimens.space4),
             child: Icon(Icons.copy_outlined, size: 14, color: colors.textSecondary),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _DeleteDialog extends StatelessWidget {
-  const _DeleteDialog({required this.name, required this.isBackedUp});
-
-  final String name;
-  final bool isBackedUp;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return AlertDialog(
-      backgroundColor: colors.surface,
-      title: Text('Delete $name?', style: context.typo.titleMedium),
-      content: Text(
-        isBackedUp
-            ? 'This removes the wallet and its recovery phrase from this '
-                  'phone. You can import it again with the phrase you wrote '
-                  'down — without it, the funds are gone for good.'
-            : 'This wallet has no confirmed backup. Deleting it removes the '
-                  'only copy of its recovery phrase, and any funds it holds '
-                  'become unreachable forever.',
-        style: context.typo.bodyMedium.copyWith(color: colors.textSecondary),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: Text(
-            'Cancel',
-            style: context.typo.label.copyWith(color: colors.textSecondary),
-          ),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(
-            'Delete',
-            style: context.typo.label.copyWith(color: colors.danger),
           ),
         ),
       ],

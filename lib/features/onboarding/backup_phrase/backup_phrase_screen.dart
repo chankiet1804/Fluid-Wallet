@@ -72,12 +72,26 @@ class _BackupPhraseScreenState extends ConsumerState<BackupPhraseScreen> {
   /// `isBackedUp` on the wallet stays false on purpose — that flag is what
   /// Settings later uses to keep nagging. Skipping postpones the backup, it
   /// does not mark it done.
+  /// States the cost of skipping in one sentence. No "don't show again" and no
+  /// default-to-skip: this is the one moment the user can still be told that
+  /// losing the phone with no written phrase means the funds are gone — so
+  /// backing up is the primary action and skipping is the secondary one.
   Future<void> _skip() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) => const _SkipDialog(),
+    final skip = await showAppActionSheet<bool>(
+      context,
+      tone: AppSheetTone.warning,
+      icon: Icons.warning_amber_rounded,
+      title: 'Back up later?',
+      message:
+          'Without these words written down, losing this phone means losing '
+          'the wallet — nobody can restore it for you. You can back up any '
+          'time from Settings.',
+      primary: const AppSheetAction(label: 'Back up now', result: false),
+      secondary: const AppSheetAction(label: 'Skip for now', result: true),
     );
-    if (confirmed != true || !mounted) return;
+    // Only an explicit "Skip for now" leaves the screen. Dismissing the sheet
+    // returns null and keeps the phrase on display, as the old dialog did.
+    if (skip != true || !mounted) return;
     context.go(widget.fromApp ? AppRoute.portfolio : AppRoute.walletReady);
   }
 
@@ -149,45 +163,6 @@ class _BackupPhraseScreenState extends ConsumerState<BackupPhraseScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// States the cost of skipping in one sentence. No "don't show again" and no
-/// default-to-skip: this is the one moment the user can still be told that
-/// losing the phone with no written phrase means the funds are gone.
-class _SkipDialog extends StatelessWidget {
-  const _SkipDialog();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-
-    return AlertDialog(
-      backgroundColor: colors.surface,
-      title: Text('Back up later?', style: context.typo.titleMedium),
-      content: Text(
-        'Without these words written down, losing this phone means losing '
-        'the wallet — nobody can restore it for you. You can back up any '
-        'time from Settings.',
-        style: context.typo.bodyMedium.copyWith(color: colors.textSecondary),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: Text(
-            'Back up now',
-            style: context.typo.label.copyWith(color: colors.accent),
-          ),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: Text(
-            'Skip for now',
-            style: context.typo.label.copyWith(color: colors.textSecondary),
-          ),
-        ),
-      ],
     );
   }
 }

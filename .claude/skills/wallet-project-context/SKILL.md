@@ -35,6 +35,7 @@ No exceptions:
 | Validate EIP-55 checksum on addresses; `eth_call` simulate before sending | Bad address = permanent loss; revert = wasted gas |
 | Dev/test on Base Sepolia; mainnet only for Swap and verified flows | Don't burn real funds debugging |
 | Never touch a real personal seed phrase | — |
+| Every confirm / warning / result is a **bottom sheet**: `showAppConfirmSheet`, `showAppActionSheet`, `AppSheet`. Never `AlertDialog`, `SnackBar`, `showDialog`, or a raw `showModalBottomSheet` in `lib/features/` | A tiny "Delete" label next to "Cancel" is a mis-tap that costs funds; sheets give full-width buttons and one consistent shape |
 | Use the existing theme tokens: `context.colors.*`, `context.typo.*`, `AppDimens.*`. **Need a color or font outside the set? Stop and ask before building** | Hardcoded styles drift per screen and block the light theme; hand-built `TextStyle` on amounts drops tabular figures and the balance jitters on every refresh |
 
 Structure and phase order are in the overview — follow its `lib/` layout and don't jump phases (security is Phase 0, not last).
@@ -49,6 +50,7 @@ The BIP39 test-vector + MetaMask address cross-check at the end of Phase 1 is bl
 - About to pick a state management / routing / model approach
 - Reaching for `double`, `num`, or `toStringAsFixed` on an amount
 - Typing `Color(0xFF`, `Colors.`, or a bare `TextStyle(` inside `lib/features/`
+- Typing `showDialog`, `AlertDialog`, `SnackBar`, or `showModalBottomSheet` inside `lib/features/` — confirms and notifications go through `showAppConfirmSheet` / `showAppActionSheet` (overview §4.6)
 - About to introduce a color or font that isn't already in `lib/app/theme/` — that needs the user's approval first, not a new token invented on the spot
 - Creating a folder under `lib/` that isn't in the overview's layout
 - Implementing a screen without knowing which phase it's in

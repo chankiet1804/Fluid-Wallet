@@ -195,6 +195,24 @@ Kiểm tra bằng mắt: `DesignGallery` (`lib/app/theme/design_gallery.dart`) r
 
 ---
 
+### 4.6 Confirm & thông báo — sheet, không phải dialog
+
+**Mọi xác nhận, cảnh báo, thông báo kết quả trong app đều là bottom sheet trượt lên.** Không có ngoại lệ nào cho "chỉ hỏi một câu ngắn".
+
+| Nhu cầu | Dùng | Ở |
+|---|---|---|
+| Hỏi xác nhận 2 nút (xoá ví, gửi tiền, bỏ qua backup) | `showAppConfirmSheet(...) → Future<bool>` | `lib/shared/widgets/app_action_sheet.dart` |
+| Thông báo / kết quả, 1–2 nút, cần giá trị trả về khác `bool` | `showAppActionSheet<T>(...)` | cùng file |
+| Sheet có nội dung riêng (danh sách, form) | `showAppSheet` + `AppSheet` shell | `lib/shared/widgets/app_sheet.dart` |
+
+**Cấm trong `lib/features/`:** `AlertDialog`, `CupertinoAlertDialog`, `SnackBar`, `showDialog`, và gọi thẳng `showModalBottomSheet` (bỏ qua `showAppSheet` là lệch bo góc + cấu hình safe area).
+
+Cấu trúc bắt buộc của sheet thông báo: **icon tròn theo vai trò → title → message → 1–2 nút full-width xếp dọc**. Tone (`AppSheetTone.success/warning/danger/neutral`) chỉ đổi màu icon; nút huỷ luôn là `SecondaryButton` nằm dưới. Với tone `danger`, nút chính là `DangerButton`.
+
+**Quy ước giá trị trả về:** dismiss (kéo xuống / chạm ra ngoài) **không bao giờ** được tính là đồng ý. `showAppConfirmSheet` trả `false` khi dismiss. Nếu màn hình cần phân biệt "dismiss" với "chọn nút phụ" — như màn Recovery phrase, nơi dismiss phải ở lại chứ không được skip — thì dùng `showAppActionSheet<bool>` và xử lý `null` riêng.
+
+---
+
 ## 5. Cấu trúc thư mục đề xuất
 
 ```
@@ -324,6 +342,7 @@ Chỉ khi cả 3 pass mới được nạp tiền.
 | Slippage mặc định quá cao | Bị sandwich attack |
 | Tin `blockchain_utils` không pin version | Publisher unverified — một release độc là mất ví. **Pin cứng, đọc changelog trước mỗi lần bump** |
 | Hardcode màu / `TextStyle` rời rạc thay vì dùng token | Mỗi màn một sắc thái khác nhau, số dư nhảy ngang vì mất tabular figures, và không thêm được light theme mà không refactor toàn bộ |
+| Dùng `AlertDialog` / `SnackBar` thay vì sheet (xem 4.6) | Nút xác nhận co lại thành chữ nhỏ cạnh nút huỷ — ở màn xoá ví và gửi tiền đó là chạm nhầm mất tiền, không phải lỗi thẩm mỹ |
 | Hardcode storage key `"mnemonic"` thay vì `wallet_mnemonic_$id` | Phải viết migration chạy một lần trên máy user đang giữ tiền — fail là mất seed |
 | Provider / cache singleton thay vì key theo address | Switch account xong vẫn hiện số dư & lịch sử của account cũ |
 | Nhầm `m/44'/60'/n'/0/0` với `m/44'/60'/0'/0/n` khi thêm account | Address không khớp MetaMask, tiền nằm ở địa chỉ không mở được |
