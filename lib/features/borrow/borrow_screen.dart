@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../app/theme/theme.dart';
+import '../../shared/widgets/widgets.dart';
 
 /// Placeholder tab. The shell supplies the Scaffold, so this is a body only.
 class BorrowScreen extends StatelessWidget {
@@ -8,13 +8,6 @@ class BorrowScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Borrow',
-        style: context.typo.bodyLarge.copyWith(
-          color: context.colors.textSecondary,
-        ),
-      ),
-    );
+    return const ComingSoonView();
   }
 }

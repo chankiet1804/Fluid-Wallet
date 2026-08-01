@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../shared/widgets/coming_soon_view.dart';
 import '../../shared/widgets/wallet_avatar.dart';
 import 'app_dimens.dart';
 import 'app_format.dart';
@@ -48,6 +49,9 @@ class DesignGallery extends StatelessWidget {
             SizedBox(height: AppDimens.space32),
             _Section('Token icons'),
             _IconGrid(_IconGrid.tokens),
+            SizedBox(height: AppDimens.space32),
+            _Section('Coming soon'),
+            ComingSoonView(),
             SizedBox(height: AppDimens.space32),
             _Section('Spacing'),
             _SpacingScale(),
