@@ -59,6 +59,20 @@ class _BackupPhraseScreenState extends ConsumerState<BackupPhraseScreen> {
     super.dispose();
   }
 
+  /// Leaves the phrase unconfirmed and opens the wallet anyway.
+  ///
+  /// `isBackedUp` on the wallet stays false on purpose — that flag is what
+  /// Settings later uses to keep nagging. Skipping postpones the backup, it
+  /// does not mark it done.
+  Future<void> _skip() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => const _SkipDialog(),
+    );
+    if (confirmed != true || !mounted) return;
+    context.go(AppRoute.walletReady);
+  }
+
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
@@ -114,11 +128,55 @@ class _BackupPhraseScreenState extends ConsumerState<BackupPhraseScreen> {
                       )
                     : null,
               ),
+              const SizedBox(height: AppDimens.space12),
+              // The wallet already exists in the keystore, so this is a real
+              // exit and not an abort: the user can back up later from
+              // Settings.
+              SecondaryButton(label: 'Back up later', onPressed: _skip),
               const SizedBox(height: AppDimens.space16),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// States the cost of skipping in one sentence. No "don't show again" and no
+/// default-to-skip: this is the one moment the user can still be told that
+/// losing the phone with no written phrase means the funds are gone.
+class _SkipDialog extends StatelessWidget {
+  const _SkipDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+
+    return AlertDialog(
+      backgroundColor: colors.surface,
+      title: Text('Back up later?', style: context.typo.titleMedium),
+      content: Text(
+        'Without these words written down, losing this phone means losing '
+        'the wallet — nobody can restore it for you. You can back up any '
+        'time from Settings.',
+        style: context.typo.bodyMedium.copyWith(color: colors.textSecondary),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(
+            'Back up now',
+            style: context.typo.label.copyWith(color: colors.accent),
+          ),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: Text(
+            'Skip for now',
+            style: context.typo.label.copyWith(color: colors.textSecondary),
+          ),
+        ),
+      ],
     );
   }
 }

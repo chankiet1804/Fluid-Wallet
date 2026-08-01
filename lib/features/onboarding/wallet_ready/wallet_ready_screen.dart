@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
@@ -17,6 +16,7 @@ class WalletReadyScreen extends ConsumerWidget {
   const WalletReadyScreen({super.key});
 
   static const _avatarSize = 96.0;
+  static const _brandMarkSize = 56.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,7 +38,7 @@ class WalletReadyScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: AppDimens.space40),
-                const Center(child: _BrandMark()),
+                const Center(child: BrandMark(size: _brandMarkSize)),
                 const SizedBox(height: AppDimens.space24),
                 Text(
                   'Your wallet is ready',
@@ -96,31 +96,6 @@ class _AccountIdentity extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _BrandMark extends StatelessWidget {
-  const _BrandMark();
-
-  static const _size = 56.0;
-  static const _glyphSize = 48.0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: _size,
-      height: _size,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: context.colors.qrSurface,
-        shape: BoxShape.circle,
-      ),
-      child: SvgPicture.asset(
-        'assets/icons/brand/fluid.svg',
-        width: _glyphSize,
-        height: _glyphSize,
-      ),
     );
   }
 }

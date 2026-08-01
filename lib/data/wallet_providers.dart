@@ -28,7 +28,9 @@ class WalletController extends AsyncNotifier<WalletState> {
   WalletRepository get _repo => ref.read(walletRepositoryProvider);
 
   Future<void> createWallet({String? name}) async {
-    state = const AsyncValue.loading();
+    // No interim `AsyncValue.loading()`: it would drop `value` to null, which
+    // the router's guard reads as "keystore not read yet". The create screen
+    // renders its own spinner, so nothing needs the loading flag here.
     state = await AsyncValue.guard(() => _repo.createWallet(name: name));
   }
 

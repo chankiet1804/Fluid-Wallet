@@ -251,7 +251,8 @@ Mỗi feature một folder, export qua barrel — giống pattern `src/features/
 ### Phase 1 — Get start (onboarding)
 Màn từ Figma: Get start → Create Username → Profile is ready → push notifications → Protect your wallet → Wallet
 
-- Sinh mnemonic, hiển thị backup, verify lại thứ tự từ — **backup + verify nằm trong luồng tạo ví, không cho skip**
+- Sinh mnemonic, hiển thị backup, verify lại thứ tự từ. **Quyết định đã đổi (2026-08-01): backup + verify được phép skip** — màn Recovery phrase có nút "Back up later" kèm dialog cảnh báo, user vào app trải nghiệm trước rồi backup sau. Skip **không** set `isBackedUp`; cờ đó ở lại `false` và là thứ Settings dùng để nhắc.
+  *Hệ quả bắt buộc:* Phase 6 phải có (a) nhắc backup thường trực khi `isBackedUp == false`, (b) màn Recovery phrase trong Settings. Cho tới lúc đó, một ví created chưa ghi seed vẫn mở app được — thêm một lý do bản build này không được cầm quá $5–10.
 - Import mnemonic có sẵn; validate **checksum BIP39 ngay tại UI**, chỉ enable nút khi checksum pass
 - Import bằng **private key nằm ngoài phạm vi** — chỉ lưu mnemonic (xem 4.2)
 - Không có passcode, không có biometric ở phase này (xem 4.2)

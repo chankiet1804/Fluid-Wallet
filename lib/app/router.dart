@@ -7,6 +7,7 @@ import '../features/onboarding/backup_phrase/backup_phrase_screen.dart';
 import '../features/onboarding/create_wallet/create_wallet_screen.dart';
 import '../features/onboarding/get_started/get_started.dart';
 import '../features/onboarding/import_wallet/import_wallet_screen.dart';
+import '../features/onboarding/splash/splash_screen.dart';
 import '../features/onboarding/verify_phrase/verify_phrase_screen.dart';
 import '../features/borrow/borrow_screen.dart';
 import '../features/lending/lending_screen.dart';
@@ -17,6 +18,11 @@ import '../features/wallet/portfolio/portfolio_screen.dart';
 import 'theme/design_gallery.dart';
 
 abstract final class AppRoute {
+  /// Landing location on launch. Reading the keystore is asynchronous, so
+  /// something has to hold the screen until the answer is known — otherwise
+  /// onboarding flashes past someone who already has a wallet.
+  static const splash = '/splash';
+
   static const getStarted = '/';
   static const createWallet = '/create';
   static const backupPhrase = '/backup';
@@ -48,23 +54,44 @@ abstract final class AppRoute {
 /// ends up in navigation state and restoration data — the screen that needs the
 /// phrase reads it from the keystore instead.
 final routerProvider = Provider<GoRouter>((ref) {
+  // go_router only re-evaluates `redirect` on a navigation event. Without this
+  // bridge the guard runs once at launch — while the keystore read is still in
+  // flight — decides "no answer yet", and never runs again, stranding a user
+  // who has a wallet on Get Started forever.
+  final refresh = _RouterRefresh();
+  ref.listen(walletControllerProvider, (_, _) => refresh.ping());
+  ref.onDispose(refresh.dispose);
+
   return GoRouter(
-    initialLocation: AppRoute.getStarted,
+    initialLocation: AppRoute.splash,
+    refreshListenable: refresh,
     redirect: (context, state) {
+      // `read`, not `watch`: the listener above is what re-triggers this.
       final wallets = ref.read(walletControllerProvider).value;
-      // Still loading metadata — hold on the current location rather than
-      // flashing onboarding at someone who already has a wallet.
+      // Still loading metadata — hold on splash until there is an answer.
       if (wallets == null) return null;
 
-      final onOnboarding = state.matchedLocation == AppRoute.getStarted;
-      if (wallets.hasWallet && onOnboarding) return AppRoute.portfolio;
-      if (!wallets.hasWallet &&
-          AppRoute.needsWallet.contains(state.matchedLocation)) {
+      final location = state.matchedLocation;
+      final atEntry =
+          location == AppRoute.splash || location == AppRoute.getStarted;
+
+      if (wallets.hasWallet) {
+        // Only the entry screens are redirected. Mid-onboarding locations
+        // (/create, /backup, /backup/verify) also have a wallet by then and
+        // must not be yanked out from under the user.
+        return atEntry ? AppRoute.portfolio : null;
+      }
+      if (location == AppRoute.splash ||
+          AppRoute.needsWallet.contains(location)) {
         return AppRoute.getStarted;
       }
       return null;
     },
     routes: [
+      GoRoute(
+        path: AppRoute.splash,
+        builder: (context, state) => const SplashScreen(),
+      ),
       GoRoute(
         path: AppRoute.getStarted,
         builder: (context, state) => const GetStartedScreen(),
@@ -139,3 +166,9 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+/// Exists only to expose `notifyListeners`, which is protected on the base
+/// class. Carries no state: go_router re-reads the wallet state itself.
+class _RouterRefresh extends ChangeNotifier {
+  void ping() => notifyListeners();
+}
