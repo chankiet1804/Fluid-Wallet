@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../app/router.dart';
 import '../../../app/theme/theme.dart';
 import '../../../data/wallet_providers.dart';
 import '../../../shared/widgets/widgets.dart';
@@ -92,7 +94,7 @@ class _Header extends StatelessWidget {
 
     return Row(
       children: [
-        // Search and settings land in later phases.
+        // Search lands in a later phase.
         IconButton(
           onPressed: null,
           icon: Icon(Icons.search, color: colors.textPrimary),
@@ -103,7 +105,9 @@ class _Header extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: null,
+          // `push`, not `go`: Settings sits on top of the shell and the back
+          // button has to land back on this tab.
+          onPressed: () => context.push(AppRoute.settings),
           icon: Icon(Icons.settings_outlined, color: colors.textPrimary),
         ),
       ],

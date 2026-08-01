@@ -12,6 +12,7 @@ import '../features/onboarding/verify_phrase/verify_phrase_screen.dart';
 import '../features/borrow/borrow_screen.dart';
 import '../features/lending/lending_screen.dart';
 import '../features/onboarding/wallet_ready/wallet_ready_screen.dart';
+import '../features/settings/settings_screen.dart';
 import '../features/statistics/statistics_screen.dart';
 import '../features/wallet/main_shell.dart';
 import '../features/wallet/portfolio/portfolio_screen.dart';
@@ -36,6 +37,10 @@ abstract final class AppRoute {
   static const lending = '/lending';
   static const statistics = '/statistics';
 
+  /// Pushed on top of the shell, not a fifth tab: the design opens it with a
+  /// back button and expects to return to the tab it was opened from.
+  static const settings = '/settings';
+
   /// Locations that render nothing without a wallet, so entering one without
   /// a wallet must bounce to onboarding rather than show empty chrome.
   static const needsWallet = {
@@ -43,6 +48,7 @@ abstract final class AppRoute {
     borrow,
     lending,
     statistics,
+    settings,
     walletReady,
   };
 
@@ -185,6 +191,10 @@ final routerProvider = Provider<GoRouter>((ref) {
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: AppRoute.settings,
+        builder: (context, state) => const SettingsScreen(),
       ),
       if (kDebugMode)
         GoRoute(
