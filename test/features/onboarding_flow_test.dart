@@ -5,6 +5,8 @@ import 'package:fluid_wallet/app/theme/app_theme.dart';
 import 'package:fluid_wallet/data/wallet_providers.dart';
 import 'package:fluid_wallet/features/onboarding/import_wallet/import_wallet_screen.dart';
 import 'package:fluid_wallet/features/onboarding/backup_phrase/backup_phrase_screen.dart';
+import 'package:fluid_wallet/features/onboarding/wallet_ready/wallet_ready_screen.dart';
+import 'package:fluid_wallet/app/theme/app_format.dart';
 import 'package:fluid_wallet/shared/widgets/widgets.dart';
 
 import '../support/fake_secure_storage.dart';
@@ -124,6 +126,49 @@ void main() {
 
       expect(find.byIcon(Icons.copy), findsNothing);
       expect(find.textContaining('Copy'), findsNothing);
+    });
+  });
+
+  group('wallet ready screen', () {
+    // Deliberately not pumpAndSettle: the placeholder is a spinner, so a
+    // never-loading account would hang the test instead of failing it.
+    Future<String> pumpReadyScreen(WidgetTester tester) async {
+      await tester.pumpWidget(host(const SizedBox()));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(SizedBox)),
+      );
+      await container.read(walletRepositoryProvider).importWallet(zero12);
+
+      await tester.pumpWidget(host(const WalletReadyScreen()));
+      await tester.pump();
+      await tester.pump();
+
+      final element = tester.element(find.byType(WalletReadyScreen));
+      return ProviderScope.containerOf(element)
+          .read(currentAccountProvider)!
+          .address;
+    }
+
+    testWidgets('shows the avatar and address of the current account',
+        (tester) async {
+      final address = await pumpReadyScreen(tester);
+
+      expect(find.byType(WalletAvatar), findsOneWidget);
+      expect(
+        tester.widget<WalletAvatar>(find.byType(WalletAvatar)).address,
+        address,
+      );
+      expect(find.text(AppFormat.shortAddress(address)), findsOneWidget);
+      expect(primaryEnabled(tester), isTrue);
+    });
+
+    testWidgets('offers continue only — no skip, no back', (tester) async {
+      await pumpReadyScreen(tester);
+
+      expect(find.text('Continue'), findsOneWidget);
+      expect(find.byType(SecondaryButton), findsNothing);
+      expect(find.textContaining('Skip'), findsNothing);
+      expect(find.byType(BackButton), findsNothing);
     });
   });
 }

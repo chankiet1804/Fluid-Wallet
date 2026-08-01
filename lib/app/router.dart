@@ -8,6 +8,7 @@ import '../features/onboarding/create_wallet/create_wallet_screen.dart';
 import '../features/onboarding/get_started/get_started.dart';
 import '../features/onboarding/import_wallet/import_wallet_screen.dart';
 import '../features/onboarding/verify_phrase/verify_phrase_screen.dart';
+import '../features/onboarding/wallet_ready/wallet_ready_screen.dart';
 import '../features/wallet/portfolio/portfolio_screen.dart';
 import 'theme/design_gallery.dart';
 
@@ -17,6 +18,7 @@ abstract final class AppRoute {
   static const backupPhrase = '/backup';
   static const verifyPhrase = '/backup/verify';
   static const importWallet = '/import';
+  static const walletReady = '/ready';
   static const portfolio = '/wallet';
 
   /// Dev-only, registered and reachable in debug builds only.
@@ -37,7 +39,9 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       final onOnboarding = state.matchedLocation == AppRoute.getStarted;
       if (wallets.hasWallet && onOnboarding) return AppRoute.portfolio;
-      if (!wallets.hasWallet && state.matchedLocation == AppRoute.portfolio) {
+      // Both of these need an existing wallet to show anything at all.
+      const needsWallet = {AppRoute.portfolio, AppRoute.walletReady};
+      if (!wallets.hasWallet && needsWallet.contains(state.matchedLocation)) {
         return AppRoute.getStarted;
       }
       return null;
@@ -64,6 +68,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.importWallet,
         builder: (context, state) => const ImportWalletScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.walletReady,
+        builder: (context, state) => const WalletReadyScreen(),
       ),
       GoRoute(
         path: AppRoute.portfolio,

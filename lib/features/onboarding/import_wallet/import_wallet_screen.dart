@@ -57,7 +57,7 @@ class _ImportWalletScreenState extends ConsumerState<ImportWalletScreen> {
           .read(walletControllerProvider.notifier)
           .importWallet(_controller.text);
       if (!mounted) return;
-      context.go(AppRoute.portfolio);
+      context.go(AppRoute.walletReady);
     } on InvalidMnemonicException {
       _fail('That recovery phrase is not valid. Check the words and order.');
     } on DuplicateWalletException {

@@ -9,7 +9,7 @@ import '../../../shared/widgets/widgets.dart';
 import 'phrase_challenge.dart';
 
 /// Confirms the user actually wrote the phrase down before the wallet is
-/// usable. Passing flips `isBackedUp` and lands on the portfolio.
+/// usable. Passing flips `isBackedUp` and lands on the wallet-ready screen.
 class VerifyPhraseScreen extends ConsumerStatefulWidget {
   const VerifyPhraseScreen({super.key, required this.walletId});
 
@@ -72,7 +72,7 @@ class _VerifyPhraseScreenState extends ConsumerState<VerifyPhraseScreen> {
         .read(walletControllerProvider.notifier)
         .markBackedUp(widget.walletId);
     if (!mounted) return;
-    context.go(AppRoute.portfolio);
+    context.go(AppRoute.walletReady);
   }
 
   @override

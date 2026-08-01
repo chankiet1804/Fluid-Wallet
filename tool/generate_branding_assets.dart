@@ -35,29 +35,53 @@ void main() {
   testWidgets('app_icon.png — full-bleed launcher icon', (tester) async {
     // Glyph at 62% leaves the margin iOS and legacy Android expect around a
     // square icon that gets rounded by the OS.
-    await _render(tester, svg, canvas: 1024, glyph: 635, background: _white,
-        out: 'app_icon.png');
+    await _render(
+      tester,
+      svg,
+      canvas: 1024,
+      glyph: 635,
+      background: _white,
+      out: 'app_icon.png',
+    );
   });
 
   testWidgets('app_icon_foreground.png — Android adaptive foreground', (
     tester,
   ) async {
-    // Adaptive icons crop to the inner 66% safe zone and may be masked to a
-    // circle, so the glyph has to sit well inside it.
-    await _render(tester, svg, canvas: 1024, glyph: 448, background: null,
-        out: 'app_icon_foreground.png');
+    // Adaptive icons crop to the inner 66% safe zone (676px here) and may be
+    // masked to a circle, so the glyph has to stay inside it.
+    await _render(
+      tester,
+      svg,
+      canvas: 1024,
+      glyph: 600,
+      background: null,
+      out: 'app_icon_foreground.png',
+    );
   });
 
   testWidgets('splash_icon.png — legacy splash', (tester) async {
     // Consumed as the 4x asset: 512px here lands at roughly 128dp on screen.
-    await _render(tester, svg, canvas: 512, glyph: 512, background: null,
-        out: 'splash_icon.png');
+    await _render(
+      tester,
+      svg,
+      canvas: 512,
+      glyph: 512,
+      background: null,
+      out: 'splash_icon.png',
+    );
   });
 
   testWidgets('splash_icon_android12.png — Android 12+ splash', (tester) async {
     // Android 12 spec: 1152px canvas, artwork confined to the inner 768px.
-    await _render(tester, svg, canvas: 1152, glyph: 768, background: null,
-        out: 'splash_icon_android12.png');
+    await _render(
+      tester,
+      svg,
+      canvas: 1152,
+      glyph: 768,
+      background: null,
+      out: 'splash_icon_android12.png',
+    );
   });
 }
 
