@@ -21,9 +21,17 @@ import '../../../shared/widgets/widgets.dart';
 /// Screenshot blocking is not wired up yet (`no_screenshot` is deferred), so
 /// this build must not hold meaningful funds.
 class BackupPhraseScreen extends ConsumerStatefulWidget {
-  const BackupPhraseScreen({super.key, required this.walletId});
+  const BackupPhraseScreen({
+    super.key,
+    required this.walletId,
+    this.fromApp = false,
+  });
 
   final String walletId;
+
+  /// True when adding a wallet from inside the app — the flow then returns to
+  /// Portfolio instead of the first-launch welcome screen.
+  final bool fromApp;
 
   @override
   ConsumerState<BackupPhraseScreen> createState() => _BackupPhraseScreenState();
@@ -70,7 +78,7 @@ class _BackupPhraseScreenState extends ConsumerState<BackupPhraseScreen> {
       builder: (dialogContext) => const _SkipDialog(),
     );
     if (confirmed != true || !mounted) return;
-    context.go(AppRoute.walletReady);
+    context.go(widget.fromApp ? AppRoute.portfolio : AppRoute.walletReady);
   }
 
   @override
@@ -124,7 +132,10 @@ class _BackupPhraseScreenState extends ConsumerState<BackupPhraseScreen> {
                 // Nothing to confirm until the phrase has actually loaded.
                 onPressed: words != null
                     ? () => context.go(
-                        '${AppRoute.verifyPhrase}?walletId=${widget.walletId}',
+                        AppRoute.verifyPhrasePath(
+                          widget.walletId,
+                          fromApp: widget.fromApp,
+                        ),
                       )
                     : null,
               ),

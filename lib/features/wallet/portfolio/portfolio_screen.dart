@@ -6,6 +6,7 @@ import '../../../app/theme/theme.dart';
 import '../../../data/wallet_providers.dart';
 import '../../../shared/widgets/widgets.dart';
 import 'portfolio_tokens.dart';
+import 'wallet_switcher_sheet.dart';
 
 /// Wallet home. The layout is final; the numbers are not — every amount here is
 /// a placeholder string until balances are wired to the current address.
@@ -19,6 +20,7 @@ class PortfolioScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final colors = context.colors;
+    final state = ref.watch(walletControllerProvider).value;
     final account = ref.watch(currentAccountProvider);
     final wallet = ref.watch(currentWalletProvider);
 
@@ -43,7 +45,15 @@ class PortfolioScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _Header(address: account.address),
+            _Header(
+              address: account.address,
+              walletName: wallet == null
+                  ? null
+                  : walletDisplayName(
+                      wallet,
+                      state!.wallets.indexWhere((w) => w.id == wallet.id),
+                    ),
+            ),
             const SizedBox(height: AppDimens.space32),
             // Constant string, not a formatted number: the real total comes
             // from Decimal later and must not inherit a double-based path.
@@ -71,9 +81,10 @@ class PortfolioScreen extends ConsumerWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({required this.address});
+  const _Header({required this.address, this.walletName});
 
   final String address;
+  final String? walletName;
 
   @override
   Widget build(BuildContext context) {
@@ -81,12 +92,16 @@ class _Header extends StatelessWidget {
 
     return Row(
       children: [
-        // Search, settings and the account switcher land in later phases.
+        // Search and settings land in later phases.
         IconButton(
           onPressed: null,
           icon: Icon(Icons.search, color: colors.textPrimary),
         ),
-        Expanded(child: Center(child: _AccountPill(address: address))),
+        Expanded(
+          child: Center(
+            child: _AccountPill(address: address, walletName: walletName),
+          ),
+        ),
         IconButton(
           onPressed: null,
           icon: Icon(Icons.settings_outlined, color: colors.textPrimary),
@@ -96,12 +111,13 @@ class _Header extends StatelessWidget {
   }
 }
 
-/// Account chip. The design mocks a wallet name here; until naming exists the
-/// shortened address is the honest label — it is what identifies the account.
+/// Account chip and the entry point to the wallet switcher. Falls back to the
+/// shortened address for wallets stored before naming existed.
 class _AccountPill extends StatelessWidget {
-  const _AccountPill({required this.address});
+  const _AccountPill({required this.address, this.walletName});
 
   final String address;
+  final String? walletName;
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +127,7 @@ class _AccountPill extends StatelessWidget {
       color: colors.surfaceElevated,
       borderRadius: BorderRadius.circular(AppDimens.radiusPill),
       child: InkWell(
-        onTap: null,
+        onTap: () => showWalletSwitcherSheet(context),
         borderRadius: BorderRadius.circular(AppDimens.radiusPill),
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -125,10 +141,13 @@ class _AccountPill extends StatelessWidget {
             children: [
               WalletAvatar(address: address, size: 24),
               const SizedBox(width: AppDimens.space8),
-              Text(
-                AppFormat.shortAddress(address),
-                style: context.typo.address,
-              ),
+              if (walletName == null)
+                Text(
+                  AppFormat.shortAddress(address),
+                  style: context.typo.address,
+                )
+              else
+                Text(walletName!, style: context.typo.label),
               Icon(
                 Icons.keyboard_arrow_down,
                 size: 18,

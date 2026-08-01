@@ -11,9 +11,17 @@ import 'phrase_challenge.dart';
 /// Confirms the user actually wrote the phrase down before the wallet is
 /// usable. Passing flips `isBackedUp` and lands on the wallet-ready screen.
 class VerifyPhraseScreen extends ConsumerStatefulWidget {
-  const VerifyPhraseScreen({super.key, required this.walletId});
+  const VerifyPhraseScreen({
+    super.key,
+    required this.walletId,
+    this.fromApp = false,
+  });
 
   final String walletId;
+
+  /// True when adding a wallet from inside the app — passing then returns to
+  /// Portfolio instead of the first-launch welcome screen.
+  final bool fromApp;
 
   @override
   ConsumerState<VerifyPhraseScreen> createState() => _VerifyPhraseScreenState();
@@ -72,7 +80,7 @@ class _VerifyPhraseScreenState extends ConsumerState<VerifyPhraseScreen> {
         .read(walletControllerProvider.notifier)
         .markBackedUp(widget.walletId);
     if (!mounted) return;
-    context.go(AppRoute.walletReady);
+    context.go(widget.fromApp ? AppRoute.portfolio : AppRoute.walletReady);
   }
 
   @override
@@ -148,7 +156,10 @@ class _VerifyPhraseScreenState extends ConsumerState<VerifyPhraseScreen> {
               SecondaryButton(
                 label: 'Show the phrase again',
                 onPressed: () => context.go(
-                  '${AppRoute.backupPhrase}?walletId=${widget.walletId}',
+                  AppRoute.backupPhrasePath(
+                    widget.walletId,
+                    fromApp: widget.fromApp,
+                  ),
                 ),
               ),
               const SizedBox(height: AppDimens.space16),

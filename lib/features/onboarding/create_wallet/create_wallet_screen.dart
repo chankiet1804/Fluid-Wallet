@@ -12,7 +12,11 @@ import '../../../shared/widgets/widgets.dart';
 /// Back is blocked while this runs: leaving halfway would strand a secret in
 /// the keystore with no metadata pointing at it.
 class CreateWalletScreen extends ConsumerStatefulWidget {
-  const CreateWalletScreen({super.key});
+  const CreateWalletScreen({super.key, this.fromApp = false});
+
+  /// True when the user is adding a wallet from inside the app rather than
+  /// onboarding. Only changes where the flow lands when it ends.
+  final bool fromApp;
 
   @override
   ConsumerState<CreateWalletScreen> createState() => _CreateWalletScreenState();
@@ -40,7 +44,9 @@ class _CreateWalletScreenState extends ConsumerState<CreateWalletScreen> {
       }
       // Straight into backup — a wallet nobody has written down is a wallet
       // one lost phone away from being gone.
-      context.go('${AppRoute.backupPhrase}?walletId=$walletId');
+      context.go(
+        AppRoute.backupPhrasePath(walletId, fromApp: widget.fromApp),
+      );
     } catch (_) {
       if (!mounted) return;
       setState(() => _error = 'Could not create the wallet. Please try again.');
@@ -110,7 +116,9 @@ class _CreateWalletScreenState extends ConsumerState<CreateWalletScreen> {
                   const SizedBox(height: AppDimens.space12),
                   SecondaryButton(
                     label: 'Back',
-                    onPressed: () => context.go(AppRoute.getStarted),
+                    onPressed: () => context.go(
+                      widget.fromApp ? AppRoute.portfolio : AppRoute.getStarted,
+                    ),
                   ),
                   const SizedBox(height: AppDimens.space16),
                 ],

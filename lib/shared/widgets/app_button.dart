@@ -44,7 +44,30 @@ class SecondaryButton extends StatelessWidget {
   }
 }
 
-/// Shared shell for both buttons. Built by hand because `AppTheme.dark`
+/// Full-width destructive action — deleting a wallet, wiping the app.
+///
+/// Tonal rather than filled on purpose: a solid red block reads as the
+/// recommended action, and destroying a key never is.
+class DangerButton extends StatelessWidget {
+  const DangerButton({super.key, required this.label, this.onPressed});
+
+  final String label;
+  final VoidCallback? onPressed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = context.colors;
+    return _ButtonSurface(
+      label: label,
+      onPressed: onPressed,
+      background: colors.dangerSurface,
+      pressedOverlay: colors.danger.withValues(alpha: 0.24),
+      foreground: colors.danger,
+    );
+  }
+}
+
+/// Shared shell for the buttons. Built by hand because `AppTheme.dark`
 /// deliberately leaves the Material button themes unconfigured.
 class _ButtonSurface extends StatelessWidget {
   const _ButtonSurface({

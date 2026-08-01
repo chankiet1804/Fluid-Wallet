@@ -119,7 +119,7 @@ class WalletRepository {
           id: walletId,
           source: source,
           accounts: [account],
-          name: name,
+          name: name ?? _defaultWalletName(previous.wallets),
           // An imported wallet's phrase is already in the user's hands.
           isBackedUp: source == WalletSource.imported,
         ),
@@ -200,6 +200,25 @@ class WalletRepository {
     await _storage.delete(key: _stateKey);
     return const WalletState();
   }
+
+  /// Default label for a wallet the user did not name.
+  ///
+  /// Numbered past the highest existing `Wallet n` rather than from the list
+  /// length: deleting a wallet in the middle would otherwise mint a name that
+  /// is already taken. The length is only a floor, so wallets stored before
+  /// naming existed — they display as `Wallet ${index + 1}` — are not collided
+  /// with either.
+  static String _defaultWalletName(List<WalletMeta> wallets) {
+    var highest = wallets.length;
+    for (final wallet in wallets) {
+      final match = _defaultNamePattern.firstMatch(wallet.name ?? '');
+      final number = int.tryParse(match?.group(1) ?? '') ?? 0;
+      if (number > highest) highest = number;
+    }
+    return 'Wallet ${highest + 1}';
+  }
+
+  static final RegExp _defaultNamePattern = RegExp(r'^Wallet (\d+)$');
 
   /// Random rather than time-based: two ids minted in the same microsecond
   /// would collide, and a wallet id is what addresses its stored secret.

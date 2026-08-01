@@ -48,6 +48,29 @@ abstract final class AppRoute {
 
   /// Dev-only, registered and reachable in debug builds only.
   static const designGallery = '/design-gallery';
+
+  /// Marks the onboarding screens as running inside the add-wallet flow rather
+  /// than first launch. The three screens it reaches differ only in where they
+  /// go when they finish: Portfolio instead of the welcome screen.
+  static const _fromApp = 'from=app';
+
+  static String createWalletPath({bool fromApp = false}) =>
+      fromApp ? '$createWallet?$_fromApp' : createWallet;
+
+  static String backupPhrasePath(String walletId, {bool fromApp = false}) =>
+      _withWallet(backupPhrase, walletId, fromApp);
+
+  static String verifyPhrasePath(String walletId, {bool fromApp = false}) =>
+      _withWallet(verifyPhrase, walletId, fromApp);
+
+  static String _withWallet(String path, String walletId, bool fromApp) {
+    final suffix = fromApp ? '&$_fromApp' : '';
+    return '$path?walletId=$walletId$suffix';
+  }
+
+  /// Reads the flag back off a matched route.
+  static bool isFromApp(GoRouterState state) =>
+      state.uri.queryParameters['from'] == 'app';
 }
 
 /// Routes carry ids, never secrets. A mnemonic or passcode in a path or query
@@ -98,17 +121,22 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoute.createWallet,
-        builder: (context, state) => const CreateWalletScreen(),
+        builder: (context, state) =>
+            CreateWalletScreen(fromApp: AppRoute.isFromApp(state)),
       ),
       GoRoute(
         path: AppRoute.backupPhrase,
-        builder: (context, state) =>
-            BackupPhraseScreen(walletId: state.uri.queryParameters['walletId']!),
+        builder: (context, state) => BackupPhraseScreen(
+          walletId: state.uri.queryParameters['walletId']!,
+          fromApp: AppRoute.isFromApp(state),
+        ),
       ),
       GoRoute(
         path: AppRoute.verifyPhrase,
-        builder: (context, state) =>
-            VerifyPhraseScreen(walletId: state.uri.queryParameters['walletId']!),
+        builder: (context, state) => VerifyPhraseScreen(
+          walletId: state.uri.queryParameters['walletId']!,
+          fromApp: AppRoute.isFromApp(state),
+        ),
       ),
       GoRoute(
         path: AppRoute.importWallet,

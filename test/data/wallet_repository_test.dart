@@ -63,6 +63,48 @@ void main() {
     });
   });
 
+  group('default naming', () {
+    test('numbers wallets in creation order', () async {
+      await repo.createWallet();
+      final state = await repo.importWallet(zero12);
+
+      expect(state.wallets.map((w) => w.name), ['Wallet 1', 'Wallet 2']);
+    });
+
+    test('an explicit name wins', () async {
+      final state = await repo.createWallet(name: 'Savings');
+      expect(state.wallets.single.name, 'Savings');
+    });
+
+    test('does not reuse a number freed by a delete', () async {
+      final first = await repo.createWallet();
+      await repo.createWallet();
+      await repo.deleteWallet(first.wallets.single.id);
+
+      final state = await repo.createWallet();
+
+      expect(state.wallets.map((w) => w.name), ['Wallet 2', 'Wallet 3']);
+    });
+
+    test('does not collide with wallets stored before naming existed',
+        () async {
+      // Such a wallet has a null name and displays as "Wallet 1" by position.
+      final legacy = await repo.createWallet();
+      await storage.write(
+        key: 'wallets_meta_v1',
+        value: _encode(
+          legacy.copyWith(
+            wallets: [legacy.wallets.single.copyWith(name: null)],
+          ),
+        ),
+      );
+
+      final state = await repo.createWallet();
+
+      expect(state.wallets.last.name, 'Wallet 2');
+    });
+  });
+
   group('importWallet', () {
     test('derives the known address for the test mnemonic', () async {
       final state = await repo.importWallet(zero12);
