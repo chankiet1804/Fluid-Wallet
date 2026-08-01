@@ -6,10 +6,18 @@ import '../../app/theme/theme.dart';
 ///
 /// A null [onPressed] renders the disabled state.
 class PrimaryButton extends StatelessWidget {
-  const PrimaryButton({super.key, required this.label, this.onPressed});
+  const PrimaryButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.icon,
+  });
 
   final String label;
   final VoidCallback? onPressed;
+
+  /// Sits before the label. Null renders the label alone, centred.
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -17,6 +25,7 @@ class PrimaryButton extends StatelessWidget {
     return _ButtonSurface(
       label: label,
       onPressed: onPressed,
+      icon: icon,
       background: colors.accent,
       pressedOverlay: colors.accentPressed,
       foreground: colors.onAccent,
@@ -26,10 +35,18 @@ class PrimaryButton extends StatelessWidget {
 
 /// Full-width tonal action. Sits under a [PrimaryButton] as the alternative.
 class SecondaryButton extends StatelessWidget {
-  const SecondaryButton({super.key, required this.label, this.onPressed});
+  const SecondaryButton({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.icon,
+  });
 
   final String label;
   final VoidCallback? onPressed;
+
+  /// Sits before the label. Null renders the label alone, centred.
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +54,7 @@ class SecondaryButton extends StatelessWidget {
     return _ButtonSurface(
       label: label,
       onPressed: onPressed,
+      icon: icon,
       background: colors.surfaceElevated,
       pressedOverlay: colors.border,
       foreground: colors.textPrimary,
@@ -76,6 +94,7 @@ class _ButtonSurface extends StatelessWidget {
     required this.background,
     required this.pressedOverlay,
     required this.foreground,
+    this.icon,
   });
 
   final String label;
@@ -83,12 +102,19 @@ class _ButtonSurface extends StatelessWidget {
   final Color background;
   final Color pressedOverlay;
   final Color foreground;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
     final enabled = onPressed != null;
     final radius = BorderRadius.circular(AppDimens.radiusMd);
+    final icon = this.icon;
+    final foreground = enabled ? this.foreground : colors.textTertiary;
+    final label = Text(
+      this.label,
+      style: context.typo.label.copyWith(color: foreground),
+    );
 
     return Material(
       color: enabled ? background : colors.surface,
@@ -102,12 +128,16 @@ class _ButtonSurface extends StatelessWidget {
           height: AppDimens.buttonHeight,
           width: double.infinity,
           child: Center(
-            child: Text(
-              label,
-              style: context.typo.label.copyWith(
-                color: enabled ? foreground : colors.textTertiary,
-              ),
-            ),
+            child: icon == null
+                ? label
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(icon, size: 20, color: foreground),
+                      const SizedBox(width: AppDimens.space8),
+                      label,
+                    ],
+                  ),
           ),
         ),
       ),

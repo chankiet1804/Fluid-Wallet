@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app/theme/theme.dart';
+import '../../data/wallet_providers.dart';
+import 'backup/backup.dart';
 import 'widgets/widgets.dart';
 
 /// Settings hub.
@@ -28,6 +30,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
+    // The router guard keeps Settings unreachable without a wallet; the null
+    // case is only the frame between deleting the last one and the redirect.
+    final walletId = ref.watch(currentWalletProvider)?.id;
 
     return Scaffold(
       backgroundColor: colors.background,
@@ -51,9 +56,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: AppDimens.space16),
               SettingsGroup(
                 children: [
-                  const SettingsTile(
+                  SettingsTile(
                     icon: Icons.vpn_key_outlined,
                     title: 'Backup',
+                    onTap: walletId == null
+                        ? null
+                        : () => showBackupSheet(context, walletId),
                   ),
                   const SettingsTile(
                     icon: Icons.notifications_none,
