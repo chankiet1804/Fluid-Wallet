@@ -12,6 +12,7 @@ import 'package:fluid_wallet/features/wallet/portfolio/wallet_switcher_sheet.dar
 import 'package:fluid_wallet/shared/widgets/widgets.dart';
 
 import '../support/fake_secure_storage.dart';
+import '../support/test_chain_registry.dart';
 
 void main() {
   const zero12 =
@@ -38,7 +39,13 @@ void main() {
   /// wallet) is exercised rather than mocked.
   Future<ProviderContainer> pumpApp(WidgetTester tester) async {
     final container = ProviderContainer(
-      overrides: [secureStorageProvider.overrideWithValue(storage)],
+      overrides: [
+        secureStorageProvider.overrideWithValue(storage),
+        // The portfolio now reads live balances. Stubbing them keeps this test
+        // about wallet switching, and keeps the balance cache timer from
+        // outliving the test.
+        ...chainTestOverrides(),
+      ],
     );
     addTearDown(container.dispose);
 

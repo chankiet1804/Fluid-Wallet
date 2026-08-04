@@ -44,6 +44,15 @@ dependencies:
   freezed_annotation: ^3.1.0
   json_annotation: ^4.12.0
 
+  # Token balances are BigInt of smallest units; display goes BigInt -> Decimal
+  # -> String and never through double. See the plan overview §4.1.
+  decimal: ^3.2.4
+  # Alchemy (balances) and CoinGecko (prices).
+  dio: ^5.9.0
+  # Token and chain icons in assets/config/chains-default.json are remote PNG
+  # URLs. Bundled SVGs still win when a symbol has one.
+  cached_network_image: ^3.4.1
+
   # Anything on the path of the mnemonic or a derived key is pinned exactly, not
   # with a caret: blockchain_utils' publisher is unverified and web3dart is a
   # hand-over from an archived repo. Read the changelog diff before any bump.
@@ -109,6 +118,10 @@ flutter:
     - assets/icons/brand/
     - assets/icons/networks/
     - assets/icons/tokens/
+    # chains-default.json is the single source of truth for which chains exist
+    # and which tokens live on each. See the plan overview §4.7 before editing
+    # it — decimals differ per chain and a bad address loses funds.
+    - assets/config/
 
   # Static weights are bundled deliberately instead of variable fonts or the
   # google_fonts package: no runtime network fetch, explicit weight mapping.

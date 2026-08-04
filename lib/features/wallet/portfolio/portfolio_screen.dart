@@ -5,8 +5,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/router.dart';
 import '../../../app/theme/theme.dart';
+import '../../../data/chain/chain.dart';
 import '../../../data/wallet_providers.dart';
 import '../../../shared/widgets/widgets.dart';
+import 'chain_filter_sheet.dart';
+import 'portfolio_format.dart';
 import 'portfolio_tokens.dart';
 import 'wallet_switcher_sheet.dart';
 
@@ -39,43 +42,45 @@ class PortfolioScreen extends ConsumerWidget {
 
     return SafeArea(
       bottom: false,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppDimens.screenPadding,
-          vertical: AppDimens.space12,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _Header(
-              address: account.address,
-              walletName: wallet == null
-                  ? null
-                  : walletDisplayName(
-                      wallet,
-                      state!.wallets.indexWhere((w) => w.id == wallet.id),
-                    ),
-            ),
-            const SizedBox(height: AppDimens.space32),
-            // Constant string, not a formatted number: the real total comes
-            // from Decimal later and must not inherit a double-based path.
-            Text(
-              r'$0.00',
-              textAlign: TextAlign.center,
-              style: context.typo.balanceLarge,
-            ),
-            const SizedBox(height: AppDimens.space8),
-            _AddressRow(address: account.address),
-            if (wallet != null && !wallet.isBackedUp) ...[
-              const SizedBox(height: AppDimens.space16),
-              const _BackupWarning(),
+      child: RefreshIndicator(
+        onRefresh: () => refreshPortfolio(ref),
+        child: SingleChildScrollView(
+          // Always scrollable so the pull gesture works even when the content
+          // is short — an empty wallet still needs a way to retry.
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimens.screenPadding,
+            vertical: AppDimens.space12,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _Header(
+                address: account.address,
+                walletName: wallet == null
+                    ? null
+                    : walletDisplayName(
+                        wallet,
+                        state!.wallets.indexWhere((w) => w.id == wallet.id),
+                      ),
+              ),
+              const SizedBox(height: AppDimens.space32),
+              const _Total(),
+              const SizedBox(height: AppDimens.space8),
+              _AddressRow(address: account.address),
+              if (wallet != null && !wallet.isBackedUp) ...[
+                const SizedBox(height: AppDimens.space16),
+                const _BackupWarning(),
+              ],
+              const SizedBox(height: AppDimens.space24),
+              const _ActionRow(),
+              const SizedBox(height: AppDimens.space24),
+              const _ChainFilterPill(),
+              const SizedBox(height: AppDimens.space12),
+              const _TokenList(),
+              const SizedBox(height: AppDimens.space24),
             ],
-            const SizedBox(height: AppDimens.space24),
-            const _ActionRow(),
-            const SizedBox(height: AppDimens.space24),
-            const _TokenList(),
-            const SizedBox(height: AppDimens.space24),
-          ],
+          ),
         ),
       ),
     );
@@ -220,63 +225,325 @@ class _ActionRow extends StatelessWidget {
   }
 }
 
-class _TokenList extends StatelessWidget {
+/// The headline balance.
+///
+/// Note what the error branch renders: an em dash, never `$0.00`. A funded
+/// wallet whose fetch failed showing zero is the failure this whole layer exists
+/// to prevent — the user reads it as having been drained.
+class _Total extends ConsumerWidget {
+  const _Total();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final snapshot = ref.watch(visiblePortfolioProvider);
+    final typo = context.typo;
+    final colors = context.colors;
+
+    return switch (snapshot) {
+      AsyncData(:final value) => Column(
+        children: [
+          Text(
+            formatPortfolioTotal(value).text,
+            textAlign: TextAlign.center,
+            style: typo.balanceLarge,
+          ),
+          if (!value.isComplete) ...[
+            const SizedBox(height: AppDimens.space8),
+            _PartialTotalChip(snapshot: value),
+          ],
+        ],
+      ),
+      AsyncError() => Text(
+        '—',
+        textAlign: TextAlign.center,
+        style: typo.balanceLarge.copyWith(color: colors.textSecondary),
+      ),
+      _ => Text(
+        '—',
+        textAlign: TextAlign.center,
+        style: typo.balanceLarge.copyWith(color: colors.textTertiary),
+      ),
+    };
+  }
+}
+
+class _PartialTotalChip extends ConsumerWidget {
+  const _PartialTotalChip({required this.snapshot});
+
+  final PortfolioSnapshot snapshot;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
+    final reason = portfolioIncompleteReason(
+      snapshot,
+      ref.watch(chainRegistryProvider),
+    );
+    if (reason == null) return const SizedBox.shrink();
+
+    return Align(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppDimens.space12,
+          vertical: AppDimens.space4,
+        ),
+        decoration: BoxDecoration(
+          color: colors.warningSurface,
+          borderRadius: BorderRadius.circular(AppDimens.radiusPill),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.info_outline, size: 14, color: colors.warning),
+            const SizedBox(width: AppDimens.space4),
+            Flexible(
+              child: Text(
+                reason,
+                style: context.typo.caption.copyWith(color: colors.warning),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Entry point to the network sheet. A pill above the list rather than a new
+/// header affordance, so the header layout stays as designed.
+class _ChainFilterPill extends ConsumerWidget {
+  const _ChainFilterPill();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
+    final filter = ref.watch(chainFilterProvider);
+    final chain = filter == null
+        ? null
+        : ref.watch(chainRegistryProvider).chain(filter);
+
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Material(
+        color: colors.surfaceElevated,
+        borderRadius: BorderRadius.circular(AppDimens.radiusPill),
+        child: InkWell(
+          onTap: () => showChainFilterSheet(context),
+          borderRadius: BorderRadius.circular(AppDimens.radiusPill),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimens.space12,
+              vertical: AppDimens.space8,
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (chain != null) ...[
+                  ChainAvatar(chain: chain, size: 16),
+                  const SizedBox(width: AppDimens.space8),
+                ],
+                Text(chain?.name ?? 'All networks', style: context.typo.caption),
+                Icon(
+                  Icons.keyboard_arrow_down,
+                  size: 16,
+                  color: colors.textSecondary,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _TokenList extends ConsumerWidget {
   const _TokenList();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final snapshot = ref.watch(visiblePortfolioProvider);
+    final registry = ref.watch(chainRegistryProvider);
+    final singleChain = ref.watch(chainFilterProvider) != null;
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: AppDimens.space4),
       decoration: BoxDecoration(
         color: context.colors.surface,
         borderRadius: BorderRadius.circular(AppDimens.radiusLg),
       ),
+      child: switch (snapshot) {
+        // Nothing came back AND at least one chain failed. "No tokens yet" must
+        // never stand in for "we could not look" — an empty list reads as an
+        // empty wallet.
+        AsyncData(:final value)
+            when value.balances.isEmpty &&
+                value.unresolved.isEmpty &&
+                value.hasFailures =>
+          const _ListError(),
+        AsyncData(:final value) when value.balances.isEmpty &&
+            value.unresolved.isEmpty =>
+          const _ListMessage(text: 'No tokens yet.'),
+        AsyncData(:final value) => Column(
+          children: [
+            for (final balance in value.balances)
+              TokenRow(
+                row: PortfolioRowVm.from(
+                  balance,
+                  chain: registry.chain(balance.chainId),
+                  showChainBadge: !singleChain,
+                ),
+              ),
+            if (value.unresolved.isNotEmpty) ...[
+              const _SectionLabel('Unrecognised'),
+              for (final asset in value.unresolved)
+                UnresolvedRow(address: asset.ref.address, symbol: asset.symbol),
+            ],
+          ],
+        ),
+        AsyncError() => const _ListError(),
+        _ => const _ListSkeleton(),
+      },
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  const _SectionLabel(this.text);
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(
+        AppDimens.space16,
+        AppDimens.space12,
+        AppDimens.space16,
+        AppDimens.space4,
+      ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: context.typo.caption.copyWith(
+            color: context.colors.textTertiary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ListMessage extends StatelessWidget {
+  const _ListMessage({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(AppDimens.space24),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: context.typo.bodyMedium.copyWith(
+          color: context.colors.textSecondary,
+        ),
+      ),
+    );
+  }
+}
+
+class _ListError extends ConsumerWidget {
+  const _ListError();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
+
+    return Padding(
+      padding: const EdgeInsets.all(AppDimens.space24),
       child: Column(
         children: [
-          for (final token in kPlaceholderTokens) _TokenRow(token: token),
+          Icon(Icons.cloud_off_outlined, color: colors.textSecondary),
+          const SizedBox(height: AppDimens.space8),
+          Text(
+            "Couldn't load balances.",
+            textAlign: TextAlign.center,
+            style: context.typo.bodyMedium.copyWith(
+              color: colors.textSecondary,
+            ),
+          ),
+          const SizedBox(height: AppDimens.space12),
+          TextButton(
+            onPressed: () => refreshPortfolio(ref),
+            child: Text('Retry', style: TextStyle(color: colors.accent)),
+          ),
         ],
       ),
     );
   }
 }
 
-class _TokenRow extends StatelessWidget {
-  const _TokenRow({required this.token});
-
-  final PortfolioToken token;
+class _ListSkeleton extends StatelessWidget {
+  const _ListSkeleton();
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppDimens.space16,
-        vertical: AppDimens.space12,
-      ),
-      child: Row(
-        children: [
-          TokenIcon(symbol: token.symbol),
-          const SizedBox(width: AppDimens.space12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      children: [
+        for (var i = 0; i < 3; i++)
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppDimens.space16,
+              vertical: AppDimens.space12,
+            ),
+            child: Row(
               children: [
-                Text(
-                  '${token.amount} ${token.symbol}',
-                  style: context.typo.amountMedium,
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: colors.surfaceElevated,
+                    shape: BoxShape.circle,
+                  ),
                 ),
-                const SizedBox(height: AppDimens.space4),
-                Text(
-                  token.fiat,
-                  style: context.typo.caption.copyWith(
-                    color: colors.textSecondary,
+                const SizedBox(width: AppDimens.space12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _SkeletonBar(width: 120, color: colors.surfaceElevated),
+                      const SizedBox(height: AppDimens.space8),
+                      _SkeletonBar(width: 72, color: colors.surfaceElevated),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
-        ],
+      ],
+    );
+  }
+}
+
+class _SkeletonBar extends StatelessWidget {
+  const _SkeletonBar({required this.width, required this.color});
+
+  final double width;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width,
+      height: 12,
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(AppDimens.radiusSm),
       ),
     );
   }

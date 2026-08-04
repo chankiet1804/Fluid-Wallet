@@ -43,3 +43,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# API keys, passed via --dart-define-from-file. Never commit (plan overview §3)
+env.json

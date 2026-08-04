@@ -10,7 +10,7 @@ Quyết định đã chốt:
 
 | Hạng mục | Lựa chọn |
 |---|---|
-| Chain | EVM only — **Base mainnet (chainId 8453)** |
+| Chain | EVM only — **multi-chain**, nguồn duy nhất là `assets/config/chains-default.json` (xem 4.7). Base (8453) vẫn là chain chính để verify từng flow |
 | Custody | Self-custody, tự sinh & giữ seed phrase, ký local |
 | Vốn | Tiền thật, quy mô nhỏ (~$5–10) |
 | Swap | Aggregator thật (0x Swap API v2) |
@@ -213,9 +213,38 @@ Cấu trúc bắt buộc của sheet thông báo: **icon tròn theo vai trò →
 
 ---
 
+### 4.7 Chain & token — một nguồn duy nhất
+
+**Quyết định đổi (2026-08-04):** app chạy **nhiều EVM chain**, không chỉ Base. Danh sách chain và danh sách token của từng chain đến từ **đúng một chỗ: `assets/config/chains-default.json`**.
+
+Cấm hardcode chain hoặc token trong Dart. Thêm một chain = thêm một entry JSON; thêm một token = thêm một entry vào mảng `tokens` của chain đó. Không dòng code nào đổi.
+
+| Thứ | Ở đâu | Vì sao |
+|---|---|---|
+| chainId, tên, RPC, explorer, native symbol/decimals, danh sách token (address + decimals + icon + coingeckoId) | `assets/config/chains-default.json` | Mô tả bản thân chain. Có thể thay/refresh từ nguồn ngoài |
+| Slug riêng của vendor (`alchemyNetwork`, `coingeckoPlatform`) | `lib/data/chain/chain_capabilities.dart` | Là thuộc tính của **lựa chọn tích hợp của app**, không phải của chain. Nhét vào file JSON thì mỗi lần refresh file lại phải merge tay |
+
+**File ngoài không được tin thẳng.** `ChainRegistry.fromDtos` validate ở biên và **fail to ở startup** (không degrade âm thầm) khi: `chainId` không parse được sang int hoặc trùng; address không phải 42 ký tự `0x…`; address có hoa-thường mà không pass EIP-55 recompute; `decimals` ngoài [0, 36]; trùng `(chainId, address)`; `derivationPath` không phải coin type 60.
+
+**Ba cái bẫy nằm sẵn trong file — đọc trước khi sửa nó:**
+
+1. **`decimals` khác nhau giữa các chain cho cùng một symbol.** USDT và USDC là **6** trên Ethereum / Arbitrum / Base / Optimism / Polygon / Avalanche / Linea, nhưng là **18** trên BSC. `test/data/chain/token_decimals_test.dart` khoá cứng các cặp này — nếu nó fail vì bạn "sửa cho đồng nhất", bạn vừa làm sai số dư 10^12 lần.
+2. **Native token dùng sentinel `0x0000…0000`**, không phải `0xEeee…EEeE` của MetaMask/0x/1inch. App theo file. Phase 5 gọi 0x phải dịch qua `toAggregatorAddress()` — một hàm duy nhất ở biên swap, không rải rác.
+3. **`derivationPath` trong file là `m/44'/60'/0'/0/0`, tức path của account index 0.** Registry chỉ được **validate** field này (coin type == 60). Address vẫn derive từ `AccountMeta.index` theo 4.4. Dùng thẳng path trong file cho account thứ n sẽ ra địa chỉ sai và tiền nằm ở ví không mở được.
+
+**Hệ quả cho các phase sau:**
+- Phase 3 History: Etherscan V2 `chainid=` thành vòng lặp theo chain đang bật; primary key drift là `(address, chainId, txHash)`
+- Phase 5 Swap: 0x quote phải nhận `chainId`, không giả định 8453
+- Mọi provider dẫn xuất khoá theo `(address, chainId, tokenAddress)` — xem 4.4, quy tắc không đổi, chỉ thêm một chiều
+
+`rpcUrl` trong file là public RPC. Dùng được cho `eth_call` / ước lượng gas, nhưng **đường số dư chính vẫn là Alchemy** (xem mục 3) — public RPC có rate limit không đoán trước.
+
+---
+
 ## 5. Cấu trúc thư mục đề xuất
 
 ```
+assets/config/    chains-default.json  (nguồn chain & token duy nhất — xem 4.7)
 lib/
   main.dart
   app/            router.dart, l10n/
@@ -227,9 +256,14 @@ lib/
     security/     secure_store.dart, biometric_gate.dart, rasp.dart
     network/      dio_client.dart, rpc_client.dart
   data/
-    chain/        base_chain.dart (chainId, RPC, explorer)
-    repositories/ balance_repo.dart, history_repo.dart, swap_repo.dart,
-                  price_repo.dart, contacts_repo.dart
+    chain/        chain_config_dto.dart (mirror JSON), chain_info.dart,
+                  token_info.dart, asset_ref.dart, native_asset.dart,
+                  chain_registry.dart, chain_capabilities.dart,
+                  token_balance.dart, portfolio_snapshot.dart,
+                  chain_providers.dart, balance_providers.dart,
+                  price_providers.dart
+    repositories/ chain_registry_repo.dart, balance_repo.dart, history_repo.dart,
+                  swap_repo.dart, price_repo.dart, contacts_repo.dart
     db/           drift schema
   features/
     onboarding/   create_wallet, backup_phrase, verify_phrase, import_wallet
@@ -279,8 +313,10 @@ Màn từ Figma: Get start → Create Username → Profile is ready → push not
 
 ### Phase 2 — Receive + Portfolio
 - Hiển thị địa chỉ, QR, copy có timeout xoá clipboard
-- Số dư native + ERC-20 qua Alchemy
-- Giá qua CoinGecko, tổng portfolio
+- **Chain & token registry load từ `assets/config/chains-default.json`** (xem 4.7), parse + validate trong `main()` trước `runApp`
+- Số dư native + ERC-20 qua Alchemy Portfolio API — fan-out nhiều chain, chunk 3 cặp address×network mỗi request
+- Giá qua CoinGecko **theo `coingeckoId` / contract address, không bao giờ theo symbol** (file có 8 biến thể USDT với 5 coingeckoId khác nhau)
+- Tổng portfolio: `PortfolioSnapshot.isComplete` — chain fail hoặc token thiếu giá thì tổng là **cận dưới** và UI phải render khác đi. Fail toàn bộ hiện `—`, **không bao giờ `$0.00`**
 - **Mọi provider/cache key theo address ngay từ đầu** (xem 4.4) — không dùng provider singleton
 
 ### Phase 3 — History
@@ -347,6 +383,11 @@ Chỉ khi cả 3 pass mới được nạp tiền.
 | Provider / cache singleton thay vì key theo address | Switch account xong vẫn hiện số dư & lịch sử của account cũ |
 | Nhầm `m/44'/60'/n'/0/0` với `m/44'/60'/0'/0/n` khi thêm account | Address không khớp MetaMask, tiền nằm ở địa chỉ không mở được |
 | Giữ mnemonic / private key trong provider state (kể cả tạm) | Rò rỉ qua devtools, hot reload, crash dump |
+| "Sửa cho đồng nhất" decimals của USDT/USDC trên BSC từ 18 về 6 | Sai số dư 10^12 lần. Xem 4.7 |
+| Dùng `derivationPath` trong `chains-default.json` để derive account thứ n | File ghi path của account 0. Address sai → tiền ở ví không mở được. Xem 4.7 |
+| Tra giá token theo symbol thay vì `coingeckoId` / contract | 8 chain có 8 địa chỉ USDT khác nhau — gán nhầm giá |
+| Hardcode chain hoặc token trong Dart thay vì sửa `chains-default.json` | Hai nguồn sự thật, lệch nhau âm thầm |
+| Hiện `$0.00` khi fetch số dư fail | User tưởng bị rút sạch. Fail phải hiện `—`. Xem 4.7 |
 
 ---
 

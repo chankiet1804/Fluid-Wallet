@@ -1,0 +1,574 @@
+[
+  {
+    "chainId": "1",
+    "chainName": "Ethereum",
+    "chain": "ethereum",
+    "groupChain": "ethereum",
+    "symbol": "ETH",
+    "icon": "https://www.okx.com/cdn/oksupport/asset/currency/icon/eth20230419112854.png",
+    "rpcUrl": "https://ethereum-rpc.publicnode.com",
+    "explorerUrl": "https://etherscan.io",
+    "decimals": 18,
+    "derivationPath": "m/44'/60'/0'/0/0",
+    "status": "enabled",
+    "rpcOptions": [
+      {
+        "name": "Default RPC",
+        "url": "https://ethereum-rpc.publicnode.com",
+        "source": "default"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "icon": "https://www.okx.com/cdn/oksupport/asset/currency/icon/eth20230419112854.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "ethereum",
+        "tradingSymbol": "BINANCE:ETHUSDT,COINBASE:ETHUSD"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0xdAC17F958D2ee523a2206206994597C13D831ec7",
+        "decimals": 6,
+        "icon": "https://www.okx.com/cdn/announce/20241209/173373907452830b77290-5e65-48a0-bd16-3dac37d1f4f5.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "tether",
+        "tradingSymbol": "COINBASE:USDTUSD"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+        "decimals": 6,
+        "icon": "https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "usd-coin",
+        "tradingSymbol": "KRAKEN:USDCUSD"
+      },
+      {
+        "name": "Gold",
+        "symbol": "XAUT",
+        "address": "0x68749665ff8d2d112fa859aa293f07a622782f38",
+        "decimals": 6,
+        "icon": "https://coin-images.coingecko.com/coins/images/10481/large/Tether_Gold.png?1696510471",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "tether-gold",
+        "tradingSymbol": "OANDA:XAUUSD,TVC:GOLD"
+      },
+      {
+        "name": "NVIDIA",
+        "symbol": "NVDAON",
+        "address": "0x2d1f7226bd1f780af6b9a49dcc0ae00e8df4bdee",
+        "decimals": 18,
+        "icon": "https://coin-images.coingecko.com/coins/images/68623/large/nvdaon_160x160.png?1756130268",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "nvidia-ondo-tokenized-stock",
+        "tradingSymbol": "NASDAQ:NVDA"
+      },
+      {
+        "name": "Meta",
+        "symbol": "METAON",
+        "address": "0x59644165402b611b350645555b50afb581c71eb2",
+        "decimals": 18,
+        "icon": "https://coin-images.coingecko.com/coins/images/68645/large/metaon_160x160.png?1756156152",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "meta-platforms-ondo-tokenized-stock",
+        "tradingSymbol": "NASDAQ:META"
+      },
+      {
+        "name": "Alphabet (Google $)",
+        "symbol": "GOOGLON",
+        "address": "0xba47214edd2bb43099611b208f75e4b42fdcfedc",
+        "decimals": 18,
+        "icon": "https://coin-images.coingecko.com/coins/images/68606/large/googlon_160x160.png?1756130033",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "alphabet-class-a-ondo-tokenized-stock",
+        "tradingSymbol": "NASDAQ:GOOGL"
+      },
+      {
+        "name": "Tesla",
+        "symbol": "TSLAON",
+        "address": "0xf6b1117ec07684d3958cad8beb1b302bfd21103f",
+        "decimals": 18,
+        "icon": "https://coin-images.coingecko.com/coins/images/68628/large/tslaon_160x160.png?1756130306",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "tesla-ondo-tokenized-stock",
+        "tradingSymbol": "NASDAQ:TSLA"
+      },
+      {
+        "name": "Amazon",
+        "symbol": "AMZNON",
+        "address": "0xbb8774fb97436d23d74c1b882e8e9a69322cfd31",
+        "decimals": 18,
+        "icon": "https://coin-images.coingecko.com/coins/images/68604/large/amznon_160x160.png?1756129958",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "amazon-ondo-tokenized-stock",
+        "tradingSymbol": "NASDAQ:AMZN"
+      }
+    ]
+  },
+  {
+    "chainId": "56",
+    "chainName": "Binance Smart Chain",
+    "chain": "binancesmartchain",
+    "groupChain": "ethereum",
+    "symbol": "BNB",
+    "icon": "https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png?1696501970",
+    "rpcUrl": "https://bsc-dataseed.binance.org/",
+    "explorerUrl": "https://bscscan.com",
+    "decimals": 18,
+    "derivationPath": "m/44'/60'/0'/0/0",
+    "status": "enabled",
+    "rpcOptions": [
+      {
+        "name": "Default RPC",
+        "url": "https://bsc-dataseed.binance.org/",
+        "source": "default"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Binance Coin",
+        "symbol": "BNB",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "status": "enabled",
+        "type": "token",
+        "icon": "https://assets.coingecko.com/coins/images/825/standard/bnb-icon2_2x.png?1696501970",
+        "coingeckoId": "binancecoin",
+        "tradingSymbol": "BINANCE:BNBUSDT,COINBASE:BNBUSD"
+      },
+      {
+        "name": "Binance USD",
+        "symbol": "BUSD",
+        "address": "0xe9e7cea3dedca5984780bafc599bd69add087d56",
+        "decimals": 18,
+        "status": "enabled",
+        "type": "token",
+        "icon": "https://assets.coingecko.com/coins/images/31273/standard/new_binance-peg-busd.png?1696530096",
+        "coingeckoId": "binance-peg-busd",
+        "tradingSymbol": "CRYPTO:BUSDUSD"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0x55d398326f99059fF775485246999027B3197955",
+        "decimals": 18,
+        "status": "enabled",
+        "type": "token",
+        "icon": "https://www.okx.com/cdn/announce/20241209/173373907452830b77290-5e65-48a0-bd16-3dac37d1f4f5.png",
+        "coingeckoId": "binance-bridged-usdt-bnb-smart-chain",
+        "tradingSymbol": "COINBASE:USDTUSD"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d",
+        "decimals": 18,
+        "status": "enabled",
+        "type": "token",
+        "icon": "https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694",
+        "coingeckoId": "binance-bridged-usdc-bnb-smart-chain",
+        "tradingSymbol": "KRAKEN:USDCUSD"
+      },
+      {
+        "address": "0xa9ee28c80f960b889dfbd1902055218cba016f75",
+        "name": "NVIDIA",
+        "symbol": "NVDAON",
+        "decimals": 18,
+        "status": "enabled",
+        "type": "token",
+        "icon": "https://coin-images.coingecko.com/coins/images/68623/large/nvdaon_160x160.png?1756130268",
+        "coingeckoId": "nvidia-ondo-tokenized-stock",
+        "tradingSymbol": "NASDAQ:NVDA"
+      },
+      {
+        "address": "0x091fc7778e6932d4009b087b191d1ee3bac5729a",
+        "name": "Alphabet (Google $)",
+        "symbol": "GOOGLON",
+        "decimals": 18,
+        "status": "enabled",
+        "type": "token",
+        "icon": "https://coin-images.coingecko.com/coins/images/68606/large/googlon_160x160.png?1756130033",
+        "coingeckoId": "alphabet-class-a-ondo-tokenized-stock",
+        "tradingSymbol": "NASDAQ:GOOGL"
+      }
+    ]
+  },
+  {
+    "chainId": "42161",
+    "chainName": "Arbitrum One",
+    "chain": "arbitrumone",
+    "groupChain": "ethereum",
+    "symbol": "ETH",
+    "icon": "https://www.okx.com/cdn/announce/20230323/16795762847387c4cd457-ca4f-4742-8bbc-3ccd4335a9a5.png",
+    "rpcUrl": "https://arb1.arbitrum.io/rpc",
+    "explorerUrl": "https://arbiscan.io",
+    "decimals": 18,
+    "derivationPath": "m/44'/60'/0'/0/0",
+    "status": "enabled",
+    "rpcOptions": [
+      {
+        "name": "Default RPC",
+        "url": "https://arb1.arbitrum.io/rpc",
+        "source": "default"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "icon": "https://www.okx.com/cdn/oksupport/asset/currency/icon/eth20230419112854.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "ethereum",
+        "tradingSymbol": "BINANCE:ETHUSDT,COINBASE:ETHUSD"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
+        "decimals": 6,
+        "icon": "https://www.okx.com/cdn/announce/20241209/173373907452830b77290-5e65-48a0-bd16-3dac37d1f4f5.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "usdt0",
+        "tradingSymbol": "COINBASE:USDTUSD"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+        "decimals": 6,
+        "icon": "https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "usd-coin",
+        "tradingSymbol": "KRAKEN:USDCUSD"
+      },
+      {
+        "name": "Gold",
+        "symbol": "XAUT0",
+        "address": "0x40461291347e1ecbb09499f3371d3f17f10d7159",
+        "decimals": 6,
+        "icon": "https://coin-images.coingecko.com/coins/images/66560/large/XAUt0_Token_Icon_Gold.png?1749747942",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "tether-gold-tokens",
+        "tradingSymbol": "OANDA:XAUUSD,TVC:GOLD"
+      }
+    ]
+  },
+  {
+    "chainId": "43114",
+    "chainName": "Avalanche",
+    "chain": "avalanche",
+    "groupChain": "ethereum",
+    "symbol": "AVAX",
+    "icon": "https://assets.coingecko.com/coins/images/12559/standard/Avalanche_Circle_RedWhite_Trans.png?1696512369",
+    "rpcUrl": "https://avalanche.publicnode.com",
+    "explorerUrl": "https://snowtrace.io",
+    "decimals": 18,
+    "derivationPath": "m/44'/60'/0'/0/0",
+    "status": "enabled",
+    "rpcOptions": [
+      {
+        "name": "Default RPC",
+        "url": "https://avalanche.publicnode.com",
+        "source": "default"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Avalanche",
+        "symbol": "AVAX",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "icon": "https://assets.coingecko.com/coins/images/12559/large/Avalanche_Circle_RedWhite_Trans.png?1696512369",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "avalanche-2",
+        "tradingSymbol": "BINANCE:AVAXUSDT,COINBASE:AVAXUSD"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0x9702230A8Ea53601f5cD2dc00fDBc13d4dF4A8c7",
+        "decimals": 6,
+        "icon": "https://www.okx.com/cdn/announce/20241209/173373907452830b77290-5e65-48a0-bd16-3dac37d1f4f5.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "tether",
+        "tradingSymbol": "COINBASE:USDTUSD"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E",
+        "decimals": 6,
+        "icon": "https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "usd-coin",
+        "tradingSymbol": "KRAKEN:USDCUSD"
+      },
+      {
+        "name": "Gold",
+        "symbol": "XAUT0",
+        "address": "0x2775d5105276781b4b85ba6ea6a6653beed1dd32",
+        "decimals": 6,
+        "icon": "https://coin-images.coingecko.com/coins/images/66560/large/XAUt0_Token_Icon_Gold.png?1749747942",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "tether-gold-tokens",
+        "tradingSymbol": "OANDA:XAUUSD,TVC:GOLD"
+      }
+    ]
+  },
+  {
+    "chainId": "137",
+    "chainName": "Polygon",
+    "chain": "polygon",
+    "groupChain": "ethereum",
+    "symbol": "POL",
+    "icon": "https://assets.coingecko.com/coins/images/32440/standard/polygon.png?1698233684",
+    "rpcUrl": "https://polygon.publicnode.com",
+    "explorerUrl": "https://polygonscan.com",
+    "decimals": 18,
+    "derivationPath": "m/44'/60'/0'/0/0",
+    "status": "enabled",
+    "rpcOptions": [
+      {
+        "name": "Default RPC",
+        "url": "https://polygon.publicnode.com",
+        "source": "default"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Polygon POS",
+        "symbol": "POL",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "icon": "https://assets.coingecko.com/coins/images/32440/standard/polygon.png?1698233684",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "polygon-ecosystem-token",
+        "tradingSymbol": "BINANCE:POLUSDT,COINBASE:POLUSD"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",
+        "decimals": 6,
+        "icon": "https://www.okx.com/cdn/announce/20241209/173373907452830b77290-5e65-48a0-bd16-3dac37d1f4f5.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "usdt0",
+        "tradingSymbol": "COINBASE:USDTUSD"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359",
+        "decimals": 6,
+        "icon": "https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "usd-coin",
+        "tradingSymbol": "KRAKEN:USDCUSD"
+      },
+      {
+        "name": "Gold",
+        "symbol": "XAUT0",
+        "address": "0xf1815bd50389c46847f0bda824ec8da914045d14",
+        "decimals": 6,
+        "icon": "https://coin-images.coingecko.com/coins/images/66560/large/XAUt0_Token_Icon_Gold.png?1749747942",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "tether-gold-tokens",
+        "tradingSymbol": "OANDA:XAUUSD,TVC:GOLD"
+      }
+    ]
+  },
+  {
+    "chainId": "8453",
+    "chainName": "Base",
+    "chain": "base",
+    "groupChain": "ethereum",
+    "symbol": "ETH",
+    "icon": "https://static.okx.com/cdn/wallet/logo/base_20900.png?x-oss-process=image/resize,m_lfit,w_100,h_100/ignore-error,1",
+    "rpcUrl": "https://mainnet.base.org",
+    "explorerUrl": "https://basescan.org",
+    "decimals": 18,
+    "derivationPath": "m/44'/60'/0'/0/0",
+    "status": "enabled",
+    "rpcOptions": [
+      {
+        "name": "Default RPC",
+        "url": "https://mainnet.base.org",
+        "source": "default"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "icon": "https://www.okx.com/cdn/oksupport/asset/currency/icon/eth20230419112854.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "ethereum",
+        "tradingSymbol": "BINANCE:ETHUSDT,COINBASE:ETHUSD"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0xfde4c96c8593536e31f229ea8f37b2ada2699bb2",
+        "decimals": 6,
+        "icon": "https://www.okx.com/cdn/announce/20241209/173373907452830b77290-5e65-48a0-bd16-3dac37d1f4f5.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "l2-standard-bridged-usdt-base",
+        "tradingSymbol": "COINBASE:USDTUSD"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0x833589fcd6edb6e08f4c7c32d4f71b54bda02913",
+        "decimals": 6,
+        "icon": "https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "usd-coin",
+        "tradingSymbol": "KRAKEN:USDCUSD"
+      }
+    ]
+  },
+  {
+    "chainId": "10",
+    "chainName": "Optimism",
+    "chain": "optimism",
+    "groupChain": "ethereum",
+    "symbol": "ETH",
+    "icon": "https://static.okx.com/cdn/wallet/logo/op_10000.png?x-oss-process=image/resize,m_lfit,w_100,h_100/ignore-error,1",
+    "rpcUrl": "https://optimism.publicnode.com",
+    "explorerUrl": "https://optimistic.etherscan.io",
+    "decimals": 18,
+    "derivationPath": "m/44'/60'/0'/0/0",
+    "status": "enabled",
+    "rpcOptions": [
+      {
+        "name": "Default RPC",
+        "url": "https://optimism.publicnode.com",
+        "source": "default"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "icon": "https://www.okx.com/cdn/oksupport/asset/currency/icon/eth20230419112854.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "ethereum",
+        "tradingSymbol": "BINANCE:ETHUSDT,COINBASE:ETHUSD"
+      },
+      {
+        "name": "Bridged USDT",
+        "symbol": "USDT",
+        "address": "0x94b008aa00579c1307b0ef2c499ad98a8ce58e58",
+        "decimals": 6,
+        "icon": "https://coin-images.coingecko.com/coins/images/35001/large/logo.png?1706959346",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "bridged-usdt",
+        "tradingSymbol": "COINBASE:USDTUSD"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
+        "decimals": 6,
+        "icon": "https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "usd-coin",
+        "tradingSymbol": "KRAKEN:USDCUSD"
+      }
+    ]
+  },
+  {
+    "chainId": "59144",
+    "chainName": "Linea",
+    "chain": "linea",
+    "groupChain": "ethereum",
+    "symbol": "ETH",
+    "icon": "https://static.okx.com/cdn/wallet/logo/linea_eth_20700.png?x-oss-process=image/resize,m_lfit,w_100,h_100/ignore-error,1",
+    "rpcUrl": "https://linea.publicnode.com",
+    "explorerUrl": "https://lineascan.build",
+    "decimals": 18,
+    "derivationPath": "m/44'/60'/0'/0/0",
+    "status": "enabled",
+    "rpcOptions": [
+      {
+        "name": "Default RPC",
+        "url": "https://linea.publicnode.com",
+        "source": "default"
+      }
+    ],
+    "tokens": [
+      {
+        "name": "Ethereum",
+        "symbol": "ETH",
+        "address": "0x0000000000000000000000000000000000000000",
+        "decimals": 18,
+        "icon": "https://www.okx.com/cdn/oksupport/asset/currency/icon/eth20230419112854.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "ethereum",
+        "tradingSymbol": "BINANCE:ETHUSDT,COINBASE:ETHUSD"
+      },
+      {
+        "name": "Tether USD",
+        "symbol": "USDT",
+        "address": "0xa219439258ca9da29e9cc4ce5596924745e12b93",
+        "decimals": 6,
+        "icon": "https://www.okx.com/cdn/announce/20241209/173373907452830b77290-5e65-48a0-bd16-3dac37d1f4f5.png",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "bridged-tether-linea",
+        "tradingSymbol": "COINBASE:USDTUSD"
+      },
+      {
+        "name": "USD Coin",
+        "symbol": "USDC",
+        "address": "0x176211869ca2b568f2a7d4ee941e073a821ee1ff",
+        "decimals": 6,
+        "icon": "https://assets.coingecko.com/coins/images/6319/standard/usdc.png?1696506694",
+        "status": "enabled",
+        "type": "token",
+        "coingeckoId": "bridged-usd-coin-linea",
+        "tradingSymbol": "KRAKEN:USDCUSD"
+      }
+    ]
+  }
+]

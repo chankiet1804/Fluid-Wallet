@@ -172,9 +172,16 @@ class _WalletRow extends ConsumerWidget {
               ),
             ),
             const SizedBox(width: AppDimens.space8),
-            // Placeholder until balances are wired — a constant string, not a
-            // formatted number, so nothing here can inherit a double path.
-            Text(r'$0.00', style: context.typo.amountMedium),
+            // Per-wallet totals are not fetched yet: showing every other wallet
+            // would mean a balance request per wallet on every open. An em dash
+            // says "not known"; "$0.00" would say "empty", and a user reading
+            // that about a funded wallet has every reason to panic.
+            Text(
+              '—',
+              style: context.typo.amountMedium.copyWith(
+                color: context.colors.textTertiary,
+              ),
+            ),
           ],
         ),
       ),

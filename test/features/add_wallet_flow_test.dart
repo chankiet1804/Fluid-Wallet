@@ -12,6 +12,7 @@ import 'package:fluid_wallet/features/wallet/portfolio/portfolio_screen.dart';
 import 'package:fluid_wallet/shared/widgets/widgets.dart';
 
 import '../support/fake_secure_storage.dart';
+import '../support/test_chain_registry.dart';
 
 void main() {
   const zero12 =
@@ -33,7 +34,12 @@ void main() {
 
   Future<ProviderContainer> pumpApp(WidgetTester tester) async {
     final container = ProviderContainer(
-      overrides: [secureStorageProvider.overrideWithValue(storage)],
+      overrides: [
+        secureStorageProvider.overrideWithValue(storage),
+        // This flow lands on the portfolio, which now fetches balances. Stub
+        // them so the test stays about adding a wallet.
+        ...chainTestOverrides(),
+      ],
     );
     addTearDown(container.dispose);
 
