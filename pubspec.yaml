@@ -1,5 +1,6 @@
 name: fluid_wallet
-description: "A new Flutter project."
+description: "Self-custody multi-chain EVM wallet in Flutter. BIP39 keys never leave the device, balances are BigInt end to end, and every chain comes from one validated config file."
+repository: https://github.com/chankiet1804/Fluid-Wallet
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
