@@ -1,8 +1,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Flutter only declares this in the debug and profile manifests, which are
+         not merged into a release build. Without it here, every Alchemy and
+         CoinGecko call fails at the OS layer in release and the portfolio
+         degrades to "N networks are unavailable" - a config bug wearing the
+         costume of a network error. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Backup stays off because the encrypted mnemonic is useless off-device:
+         flutter_secure_storage v10 wraps it with a key that lives in this
+         phone's Keystore and never leaves it. Let auto-backup restore the
+         ciphertext onto another device and reads throw InvalidKeyException -
+         the user loses the seed while the funds stay on chain. Overview 4.2. -->
     <application
         android:label="fluid_wallet"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="false">
         <activity
             android:name=".MainActivity"
             android:exported="true"
