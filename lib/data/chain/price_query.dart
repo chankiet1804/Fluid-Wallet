@@ -26,7 +26,10 @@ abstract class PriceQuery with _$PriceQuery {
             ? a.chainId.compareTo(b.chainId)
             : a.address.compareTo(b.address),
       );
-    return PriceQuery.sorted(refs: List.unmodifiable(unique), currency: currency);
+    return PriceQuery.sorted(
+      refs: List.unmodifiable(unique),
+      currency: currency,
+    );
   }
 
   bool get isEmpty => refs.isEmpty;

@@ -108,10 +108,7 @@ void main() {
   });
 
   group('visiblePortfolioProvider padding', () {
-    ProviderContainer containerWith(
-      PortfolioSnapshot snapshot, {
-      int? filter,
-    }) {
+    ProviderContainer containerWith(PortfolioSnapshot snapshot, {int? filter}) {
       final container = ProviderContainer(
         overrides: [
           chainRegistryProvider.overrideWithValue(registry),
@@ -140,9 +137,9 @@ void main() {
       // Only the natives are invented — all networks must not turn into a
       // catalogue of every token on eight chains.
       expect(
-        result.balances.where((b) => b.amount.isZero).every(
-          (b) => b.token.isNative,
-        ),
+        result.balances
+            .where((b) => b.amount.isZero)
+            .every((b) => b.token.isNative),
         isTrue,
       );
     });
@@ -217,9 +214,7 @@ void main() {
     });
 
     test('padding keeps its own decimals and prices at an exact zero', () {
-      final result = visible(
-        containerWith(snapshotOf(), filter: 8453),
-      );
+      final result = visible(containerWith(snapshotOf(), filter: 8453));
 
       for (final b in result.balances) {
         expect(b.amount.decimals, b.token.decimals);

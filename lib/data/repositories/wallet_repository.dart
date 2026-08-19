@@ -81,8 +81,7 @@ class WalletRepository {
     final existing = await load();
     final alreadyHere = existing.wallets.any(
       (wallet) => wallet.accounts.any(
-        (account) =>
-            account.address.toLowerCase() == address.toLowerCase(),
+        (account) => account.address.toLowerCase() == address.toLowerCase(),
       ),
     );
     if (alreadyHere) throw const DuplicateWalletException();
@@ -178,8 +177,9 @@ class WalletRepository {
   Future<WalletState> deleteWallet(String walletId) async {
     await _secureStore.deleteMnemonic(walletId);
     final state = await load();
-    final remaining =
-        state.wallets.where((wallet) => wallet.id != walletId).toList();
+    final remaining = state.wallets
+        .where((wallet) => wallet.id != walletId)
+        .toList();
     final fallback = remaining.firstOrNull;
     final next = WalletState(
       wallets: remaining,

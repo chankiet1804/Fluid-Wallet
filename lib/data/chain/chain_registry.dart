@@ -109,9 +109,9 @@ class ChainRegistry {
 
   /// Enabled tokens on a chain, native first, then file order.
   List<TokenInfo> tokensOf(int chainId) =>
-      _tokensByChain[chainId]?.where((t) => t.isEnabled).toList(
-        growable: false,
-      ) ??
+      _tokensByChain[chainId]
+          ?.where((t) => t.isEnabled)
+          .toList(growable: false) ??
       const [];
 
   /// Every enabled token on every enabled chain.
@@ -148,8 +148,10 @@ class ChainRegistry {
       final where = '${chain.name} token "${t.symbol}"';
 
       if (!_addressPattern.hasMatch(t.address)) {
-        throw RegistryFormatException('$where has a malformed address '
-            '"${t.address}" — expected 0x + 40 hex characters');
+        throw RegistryFormatException(
+          '$where has a malformed address '
+          '"${t.address}" — expected 0x + 40 hex characters',
+        );
       }
       _validateDecimals(t.decimals, where);
 
@@ -162,7 +164,8 @@ class ChainRegistry {
       String? checksum;
       if (!isNative) {
         checksum = EthAddrUtils.toChecksumAddress(t.address);
-        final hasMixedCase = t.address != t.address.toLowerCase() &&
+        final hasMixedCase =
+            t.address != t.address.toLowerCase() &&
             t.address != t.address.toUpperCase();
         if (hasMixedCase && t.address != checksum) {
           throw RegistryFormatException(
@@ -175,9 +178,7 @@ class ChainRegistry {
 
       final ref = AssetRef.raw(chain.chainId, lower);
       if (!seen.add(ref)) {
-        throw RegistryFormatException(
-          '${chain.name} lists ${t.address} twice',
-        );
+        throw RegistryFormatException('${chain.name} lists ${t.address} twice');
       }
 
       if (isNative) {

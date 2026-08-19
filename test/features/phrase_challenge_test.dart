@@ -33,19 +33,24 @@ void main() {
     }
   });
 
-  test('decoys come from the phrase, so options are not guessable by shape', () {
-    for (final c in buildPhraseChallenges(words, random: Random(5))) {
-      for (final option in c.options) {
-        expect(words, contains(option));
+  test(
+    'decoys come from the phrase, so options are not guessable by shape',
+    () {
+      for (final c in buildPhraseChallenges(words, random: Random(5))) {
+        for (final option in c.options) {
+          expect(words, contains(option));
+        }
       }
-    }
-  });
+    },
+  );
 
   test('the answer is not always in the same slot', () {
     final slots = {
       for (var seed = 0; seed < 20; seed++)
-        ...buildPhraseChallenges(words, random: Random(seed))
-            .map((c) => c.options.indexOf(c.answer)),
+        ...buildPhraseChallenges(
+          words,
+          random: Random(seed),
+        ).map((c) => c.options.indexOf(c.answer)),
     };
     expect(slots.length, greaterThan(1));
   });

@@ -184,10 +184,8 @@ class _PhraseGrid extends StatelessWidget {
         mainAxisExtent: 48,
       ),
       itemCount: words.length,
-      itemBuilder: (context, index) => _WordCell(
-        position: index + 1,
-        word: words[index],
-      ),
+      itemBuilder: (context, index) =>
+          _WordCell(position: index + 1, word: words[index]),
     );
 
     return SingleChildScrollView(child: grid);
@@ -217,14 +215,10 @@ class _WordCell extends StatelessWidget {
             width: 24,
             child: Text(
               '$position',
-              style: context.typo.caption.copyWith(
-                color: colors.textTertiary,
-              ),
+              style: context.typo.caption.copyWith(color: colors.textTertiary),
             ),
           ),
-          Expanded(
-            child: Text(word, style: context.typo.bodyLarge),
-          ),
+          Expanded(child: Text(word, style: context.typo.bodyLarge)),
         ],
       ),
     );

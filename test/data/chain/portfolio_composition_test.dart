@@ -64,20 +64,26 @@ void main() {
       expect(formatPortfolioTotal(s), (text: r'$7,501.65', isPartial: false));
     });
 
-    test('an unpriced holding is excluded and marks the total a lower bound', () {
-      final s = snapshot(
-        balances: [balance(1, '1', usd: '2500'), balance(56, '3')],
-        unpriced: 1,
-      );
+    test(
+      'an unpriced holding is excluded and marks the total a lower bound',
+      () {
+        final s = snapshot(
+          balances: [
+            balance(1, '1', usd: '2500'),
+            balance(56, '3'),
+          ],
+          unpriced: 1,
+        );
 
-      expect(s.total.value, Decimal.parse('2500'));
-      expect(s.isComplete, isFalse);
+        expect(s.total.value, Decimal.parse('2500'));
+        expect(s.isComplete, isFalse);
 
-      final formatted = formatPortfolioTotal(s);
-      expect(formatted.isPartial, isTrue);
-      expect(formatted.text, startsWith('≥'));
-      expect(portfolioIncompleteReason(s, registry), contains('no price'));
-    });
+        final formatted = formatPortfolioTotal(s);
+        expect(formatted.isPartial, isTrue);
+        expect(formatted.text, startsWith('≥'));
+        expect(portfolioIncompleteReason(s, registry), contains('no price'));
+      },
+    );
 
     test('a failed chain contributes nothing but is announced', () {
       final s = snapshot(

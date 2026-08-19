@@ -18,10 +18,8 @@ final _amountPattern = RegExp(r'^\d*\.?\d*$');
 /// Base but USDT is 18 on BNB Chain, so the same symbol cannot share a scale.
 @freezed
 abstract class TokenAmount with _$TokenAmount {
-  const factory TokenAmount({
-    required BigInt raw,
-    required int decimals,
-  }) = _TokenAmount;
+  const factory TokenAmount({required BigInt raw, required int decimals}) =
+      _TokenAmount;
 
   const TokenAmount._();
 
@@ -35,7 +33,10 @@ abstract class TokenAmount with _$TokenAmount {
         ? hex.substring(2)
         : hex;
     if (digits.isEmpty) return TokenAmount.zero(decimals);
-    return TokenAmount(raw: BigInt.parse(digits, radix: 16), decimals: decimals);
+    return TokenAmount(
+      raw: BigInt.parse(digits, radix: 16),
+      decimals: decimals,
+    );
   }
 
   /// Parses a user-typed decimal string, throwing on anything invalid.
@@ -91,7 +92,10 @@ abstract class TokenAmount with _$TokenAmount {
     }
     fraction = fraction.padRight(decimals, '0');
 
-    return TokenAmount(raw: BigInt.parse('$whole$fraction'), decimals: decimals);
+    return TokenAmount(
+      raw: BigInt.parse('$whole$fraction'),
+      decimals: decimals,
+    );
   }
 
   /// Exact: shifting the decimal point is not a division, so nothing rounds.

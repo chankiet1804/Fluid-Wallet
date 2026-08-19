@@ -111,7 +111,9 @@ class _ActionSheetBody<T> extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Center(child: _ToneIcon(icon: icon, tone: tone)),
+          Center(
+            child: _ToneIcon(icon: icon, tone: tone),
+          ),
           const SizedBox(height: AppDimens.space20),
           Text(
             title,

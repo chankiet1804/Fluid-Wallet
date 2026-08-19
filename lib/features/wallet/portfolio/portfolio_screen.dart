@@ -342,7 +342,10 @@ class _ChainFilterPill extends ConsumerWidget {
                   ChainAvatar(chain: chain, size: 16),
                   const SizedBox(width: AppDimens.space8),
                 ],
-                Text(chain?.name ?? 'All networks', style: context.typo.caption),
+                Text(
+                  chain?.name ?? 'All networks',
+                  style: context.typo.caption,
+                ),
                 Icon(
                   Icons.keyboard_arrow_down,
                   size: 16,
@@ -381,8 +384,8 @@ class _TokenList extends ConsumerWidget {
                 value.unresolved.isEmpty &&
                 value.hasFailures =>
           const _ListError(),
-        AsyncData(:final value) when value.balances.isEmpty &&
-            value.unresolved.isEmpty =>
+        AsyncData(:final value)
+            when value.balances.isEmpty && value.unresolved.isEmpty =>
           const _ListMessage(text: 'No tokens yet.'),
         AsyncData(:final value) => Column(
           children: [

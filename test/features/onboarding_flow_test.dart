@@ -10,6 +10,7 @@ import 'package:fluid_wallet/app/theme/app_format.dart';
 import 'package:fluid_wallet/shared/widgets/widgets.dart';
 
 import '../support/fake_secure_storage.dart';
+import '../support/sync_key_derivation.dart';
 
 void main() {
   const zero12 =
@@ -22,7 +23,10 @@ void main() {
 
   Widget host(Widget child) {
     return ProviderScope(
-      overrides: [secureStorageProvider.overrideWithValue(storage)],
+      overrides: [
+        secureStorageProvider.overrideWithValue(storage),
+        syncDerivationOverride(storage),
+      ],
       child: MaterialApp(theme: AppTheme.dark, home: child),
     );
   }
@@ -33,8 +37,9 @@ void main() {
   }
 
   group('import screen', () {
-    testWidgets('import stays disabled until the checksum passes',
-        (tester) async {
+    testWidgets('import stays disabled until the checksum passes', (
+      tester,
+    ) async {
       await tester.pumpWidget(host(const ImportWalletScreen()));
 
       expect(primaryEnabled(tester), isFalse);
@@ -48,7 +53,10 @@ void main() {
       );
       await tester.pump();
 
-      expect(find.text('These words do not form a valid phrase'), findsOneWidget);
+      expect(
+        find.text('These words do not form a valid phrase'),
+        findsOneWidget,
+      );
       expect(primaryEnabled(tester), isFalse);
     });
 
@@ -62,8 +70,9 @@ void main() {
       expect(primaryEnabled(tester), isTrue);
     });
 
-    testWidgets('a partial phrase reads as progress, not as an error',
-        (tester) async {
+    testWidgets('a partial phrase reads as progress, not as an error', (
+      tester,
+    ) async {
       await tester.pumpWidget(host(const ImportWalletScreen()));
 
       await tester.enterText(find.byType(TextField), 'abandon abandon');
@@ -96,13 +105,12 @@ void main() {
       final container = ProviderScope.containerOf(
         tester.element(find.byType(SizedBox)),
       );
-      final state =
-          await container.read(walletRepositoryProvider).importWallet(zero12);
+      final state = await container
+          .read(walletRepositoryProvider)
+          .importWallet(zero12);
       final walletId = state.wallets.single.id;
 
-      await tester.pumpWidget(
-        host(BackupPhraseScreen(walletId: walletId)),
-      );
+      await tester.pumpWidget(host(BackupPhraseScreen(walletId: walletId)));
       await tester.pumpAndSettle();
 
       // All twelve words are visible with no reveal step in between.
@@ -116,8 +124,9 @@ void main() {
       final container = ProviderScope.containerOf(
         tester.element(find.byType(SizedBox)),
       );
-      final state =
-          await container.read(walletRepositoryProvider).importWallet(zero12);
+      final state = await container
+          .read(walletRepositoryProvider)
+          .importWallet(zero12);
 
       await tester.pumpWidget(
         host(BackupPhraseScreen(walletId: state.wallets.single.id)),
@@ -144,13 +153,14 @@ void main() {
       await tester.pump();
 
       final element = tester.element(find.byType(WalletReadyScreen));
-      return ProviderScope.containerOf(element)
-          .read(currentAccountProvider)!
-          .address;
+      return ProviderScope.containerOf(
+        element,
+      ).read(currentAccountProvider)!.address;
     }
 
-    testWidgets('shows the avatar and address of the current account',
-        (tester) async {
+    testWidgets('shows the avatar and address of the current account', (
+      tester,
+    ) async {
       final address = await pumpReadyScreen(tester);
 
       expect(find.byType(WalletAvatar), findsOneWidget);

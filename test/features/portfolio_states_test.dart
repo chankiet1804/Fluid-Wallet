@@ -6,6 +6,7 @@ import 'package:fluid_wallet/data/chain/chain.dart';
 import 'package:fluid_wallet/data/repositories/wallet_repository.dart';
 import 'package:fluid_wallet/data/wallet_providers.dart';
 import 'package:fluid_wallet/features/wallet/portfolio/portfolio_screen.dart';
+import 'package:fluid_wallet/shared/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -101,9 +102,7 @@ void main() {
   testWidgets('a complete snapshot renders the total plainly', (tester) async {
     await pump(
       tester,
-      AsyncValue.data(
-        snapshotOf(balances: [ethOn(8453, '1', usd: '2500')]),
-      ),
+      AsyncValue.data(snapshotOf(balances: [ethOn(8453, '1', usd: '2500')])),
     );
 
     expect(find.text(r'$2,500.00'), findsOneWidget);
@@ -136,7 +135,10 @@ void main() {
       tester,
       AsyncValue.data(
         snapshotOf(
-          balances: [ethOn(8453, '1', usd: '2500'), ethOn(1, '2')],
+          balances: [
+            ethOn(8453, '1', usd: '2500'),
+            ethOn(1, '2'),
+          ],
           unpriced: 1,
         ),
       ),
@@ -177,10 +179,23 @@ void main() {
     );
 
     // Showing Base at $0.00 would be the app reporting a balance it never read.
+    // The banner names the failed chain, so only rows count here.
     final base = registry.chain(8453)!;
-    expect(find.textContaining(base.name), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byType(TokenRow),
+        matching: find.textContaining(base.name),
+      ),
+      findsNothing,
+    );
     // The chains that did answer are still listed.
-    expect(find.textContaining(registry.chain(1)!.name), findsWidgets);
+    expect(
+      find.descendant(
+        of: find.byType(TokenRow),
+        matching: find.textContaining(registry.chain(1)!.name),
+      ),
+      findsWidgets,
+    );
   });
 
   testWidgets('every chain failing does not claim emptiness', (tester) async {

@@ -65,9 +65,7 @@ class _VerifyPhraseScreenState extends ConsumerState<VerifyPhraseScreen> {
     final challenges = _challenges;
     if (challenges == null) return;
 
-    final correct = challenges.every(
-      (c) => _picked[c.position] == c.answer,
-    );
+    final correct = challenges.every((c) => _picked[c.position] == c.answer);
     if (!correct) {
       setState(() {
         _wrong = true;
@@ -108,8 +106,9 @@ class _VerifyPhraseScreenState extends ConsumerState<VerifyPhraseScreen> {
                   child: Center(
                     child: Text(
                       'Could not read the recovery phrase.',
-                      style:
-                          context.typo.bodyLarge.copyWith(color: colors.danger),
+                      style: context.typo.bodyLarge.copyWith(
+                        color: colors.danger,
+                      ),
                     ),
                   ),
                 )
@@ -216,10 +215,7 @@ class _ChallengeBlock extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Word #${challenge.position}',
-          style: context.typo.titleMedium,
-        ),
+        Text('Word #${challenge.position}', style: context.typo.titleMedium),
         const SizedBox(height: AppDimens.space12),
         Row(
           children: [

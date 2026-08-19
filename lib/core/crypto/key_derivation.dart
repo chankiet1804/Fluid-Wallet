@@ -14,7 +14,8 @@ class KeyDerivation {
   static const int coinType = 60;
 
   /// The path this service derives, for display and for asserting in tests.
-  static String pathFor(int accountIndex) => "m/44'/$coinType'/0'/0/$accountIndex";
+  static String pathFor(int accountIndex) =>
+      "m/44'/$coinType'/0'/0/$accountIndex";
 
   /// EIP-55 checksummed address. `toAddress` runs the keccak checksum encoder,
   /// so the result is safe to compare against MetaMask verbatim.
@@ -46,9 +47,7 @@ class KeyDerivation {
 
   Bip44 _derive(String mnemonic, int accountIndex) {
     final seed = Bip39SeedGenerator(Mnemonic.fromString(mnemonic)).generate();
-    return Bip44.fromSeed(seed, Bip44Coins.ethereum)
-        .purpose
-        .coin
+    return Bip44.fromSeed(seed, Bip44Coins.ethereum).purpose.coin
         .account(0)
         .change(Bip44Changes.chainExt)
         .addressIndex(accountIndex);

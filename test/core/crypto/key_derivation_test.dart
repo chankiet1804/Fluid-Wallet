@@ -129,8 +129,10 @@ void main() {
     });
 
     test('rejects a word that is not in the wordlist', () {
-      expect(mnemonicService.isValid(zero12.replaceFirst('about', 'zzzz')),
-          isFalse);
+      expect(
+        mnemonicService.isValid(zero12.replaceFirst('about', 'zzzz')),
+        isFalse,
+      );
     });
 
     test('rejects empty and whitespace-only input', () {
@@ -139,7 +141,8 @@ void main() {
     });
 
     test('normalizes casing and runs of whitespace', () {
-      final messy = '  ABANDON\n abandon   abandon abandon abandon abandon '
+      final messy =
+          '  ABANDON\n abandon   abandon abandon abandon abandon '
           'abandon abandon abandon abandon abandon\tABOUT  ';
       expect(mnemonicService.normalize(messy), zero12);
       expect(mnemonicService.isValid(messy), isTrue);

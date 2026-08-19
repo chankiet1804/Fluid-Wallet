@@ -75,9 +75,7 @@ class ImportWalletSheet extends StatelessWidget {
       // Lifts the form clear of the keyboard, which would otherwise cover the
       // import button on every phone.
       bottomInset: MediaQuery.viewInsetsOf(context).bottom,
-      child: ImportPhraseForm(
-        onImported: () => Navigator.of(context).pop(),
-      ),
+      child: ImportPhraseForm(onImported: () => Navigator.of(context).pop()),
     );
   }
 }
