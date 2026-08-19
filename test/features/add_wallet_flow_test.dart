@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluid_wallet/app/router.dart';
 import 'package:fluid_wallet/app/theme/app_theme.dart';
-import 'package:fluid_wallet/core/security/secure_store.dart';
-import 'package:fluid_wallet/data/repositories/wallet_repository.dart';
 import 'package:fluid_wallet/data/wallet_providers.dart';
 import 'package:fluid_wallet/features/onboarding/backup_phrase/backup_phrase_screen.dart';
 import 'package:fluid_wallet/features/wallet/portfolio/add_wallet_sheet.dart';
@@ -12,6 +10,7 @@ import 'package:fluid_wallet/features/wallet/portfolio/portfolio_screen.dart';
 import 'package:fluid_wallet/shared/widgets/widgets.dart';
 
 import '../support/fake_secure_storage.dart';
+import '../support/sync_key_derivation.dart';
 import '../support/test_chain_registry.dart';
 
 void main() {
@@ -25,10 +24,7 @@ void main() {
   setUp(() => storage = FakeSecureStorage());
 
   Future<void> seedOneWallet({bool imported = false}) async {
-    final repo = WalletRepository(
-      secureStore: SecureStore(storage),
-      storage: storage,
-    );
+    final repo = syncWalletRepository(storage);
     imported ? await repo.importWallet(zero12) : await repo.createWallet();
   }
 
@@ -36,6 +32,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         secureStorageProvider.overrideWithValue(storage),
+        syncDerivationOverride(storage),
         // This flow lands on the portfolio, which now fetches balances. Stub
         // them so the test stays about adding a wallet.
         ...chainTestOverrides(),
@@ -71,6 +68,17 @@ void main() {
     await tester.tap(find.text('Add Wallet'));
     await tester.pumpAndSettle();
   }
+
+  testWidgets('Add Wallet offers create and import', (tester) async {
+    await seedOneWallet();
+    await pumpApp(tester);
+
+    await openAddWallet(tester);
+
+    expect(find.byType(AddWalletSheet), findsOneWidget);
+    expect(find.text('Create a new wallet'), findsOneWidget);
+    expect(find.text('Import an existing wallet'), findsOneWidget);
+  });
 
   testWidgets('importing from the sheet adds the wallet and selects it', (
     tester,

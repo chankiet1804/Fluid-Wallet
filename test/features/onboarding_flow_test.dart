@@ -10,6 +10,7 @@ import 'package:fluid_wallet/app/theme/app_format.dart';
 import 'package:fluid_wallet/shared/widgets/widgets.dart';
 
 import '../support/fake_secure_storage.dart';
+import '../support/sync_key_derivation.dart';
 
 void main() {
   const zero12 =
@@ -22,7 +23,10 @@ void main() {
 
   Widget host(Widget child) {
     return ProviderScope(
-      overrides: [secureStorageProvider.overrideWithValue(storage)],
+      overrides: [
+        secureStorageProvider.overrideWithValue(storage),
+        syncDerivationOverride(storage),
+      ],
       child: MaterialApp(theme: AppTheme.dark, home: child),
     );
   }
@@ -76,6 +80,22 @@ void main() {
 
       expect(find.text('2 words so far'), findsOneWidget);
       expect(primaryEnabled(tester), isFalse);
+    });
+
+    testWidgets('rejects a phrase already imported', (tester) async {
+      await tester.pumpWidget(host(const ImportWalletScreen()));
+      final container = ProviderScope.containerOf(
+        tester.element(find.byType(ImportWalletScreen)),
+      );
+      await container.read(walletRepositoryProvider).importWallet(zero12);
+
+      await tester.enterText(find.byType(TextField), zero12);
+      await tester.pump();
+      await tester.tap(find.byType(PrimaryButton));
+      await tester.pump();
+      await tester.pump();
+
+      expect(find.text('This wallet is already in the app.'), findsOneWidget);
     });
   });
 

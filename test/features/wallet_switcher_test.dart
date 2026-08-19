@@ -3,15 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fluid_wallet/app/router.dart';
 import 'package:fluid_wallet/app/theme/app_theme.dart';
-import 'package:fluid_wallet/core/security/secure_store.dart';
 import 'package:fluid_wallet/data/models/wallet_meta.dart';
-import 'package:fluid_wallet/data/repositories/wallet_repository.dart';
 import 'package:fluid_wallet/data/wallet_providers.dart';
 import 'package:fluid_wallet/features/onboarding/get_started/get_started_screen.dart';
 import 'package:fluid_wallet/features/wallet/portfolio/wallet_switcher_sheet.dart';
 import 'package:fluid_wallet/shared/widgets/widgets.dart';
 
 import '../support/fake_secure_storage.dart';
+import '../support/sync_key_derivation.dart';
 import '../support/test_chain_registry.dart';
 
 void main() {
@@ -26,10 +25,7 @@ void main() {
   /// Seeds the keystore before the app starts, the way a returning user's
   /// device already looks.
   Future<WalletState> seed({required int wallets}) async {
-    final repo = WalletRepository(
-      secureStore: SecureStore(storage),
-      storage: storage,
-    );
+    final repo = syncWalletRepository(storage);
     var state = await repo.createWallet();
     if (wallets > 1) state = await repo.importWallet(zero12);
     return state;
@@ -41,6 +37,7 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         secureStorageProvider.overrideWithValue(storage),
+        syncDerivationOverride(storage),
         // The portfolio now reads live balances. Stubbing them keeps this test
         // about wallet switching, and keeps the balance cache timer from
         // outliving the test.
@@ -73,6 +70,22 @@ void main() {
     of: find.byType(WalletSwitcherSheet),
     matching: find.text(text),
   );
+
+  testWidgets('the sheet lists the other wallets, not the current one', (
+    tester,
+  ) async {
+    await seed(wallets: 2);
+    await pumpApp(tester);
+
+    await openSheet(tester);
+
+    expect(find.byType(WalletSwitcherSheet), findsOneWidget);
+    // Wallet 2 is current (imported last): it appears once, in the header, and
+    // Wallet 1 is the only row offered to switch to.
+    expect(inSheet('Wallet 2'), findsOneWidget);
+    expect(inSheet('Wallet 1'), findsOneWidget);
+    expect(inSheet('Add Wallet'), findsOneWidget);
+  });
 
   testWidgets('tapping another wallet switches the current account', (
     tester,
@@ -122,7 +135,11 @@ void main() {
     await tester.tap(find.widgetWithText(DangerButton, 'Delete'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(TextButton, 'Delete'));
-    await tester.pumpAndSettle();
+    // Bounded pumps, not pumpAndSettle: Get started runs ChainArc on a
+    // repeating controller, so there is no frame at which the tree goes quiet.
+    for (var i = 0; i < 20; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
 
     expect(container.read(walletControllerProvider).value!.wallets, isEmpty);
     expect(find.byType(GetStartedScreen), findsOneWidget);
