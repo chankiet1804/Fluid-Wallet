@@ -59,8 +59,10 @@ void main() {
     return container;
   }
 
+  /// Taps the account pill through its avatar: the chain filter pill carries
+  /// the same chevron icon, so `find.byIcon` matches two widgets.
   Future<void> openSheet(WidgetTester tester) async {
-    await tester.tap(find.byIcon(Icons.keyboard_arrow_down));
+    await tester.tap(find.byType(WalletAvatar));
     await tester.pumpAndSettle();
   }
 
@@ -69,6 +71,16 @@ void main() {
   Finder inSheet(String text) => find.descendant(
     of: find.byType(WalletSwitcherSheet),
     matching: find.text(text),
+  );
+
+  /// Scoped to the delete confirmation: the switcher stays mounted underneath
+  /// it, carrying its own DangerButton labelled 'Delete'.
+  Finder confirmDelete() => find.descendant(
+    of: find.ancestor(
+      of: find.textContaining('Delete Wallet'),
+      matching: find.byType(AppSheet),
+    ),
+    matching: find.widgetWithText(DangerButton, 'Delete'),
   );
 
   testWidgets('the sheet lists the other wallets, not the current one', (
@@ -112,7 +124,7 @@ void main() {
     await openSheet(tester);
     await tester.tap(find.widgetWithText(DangerButton, 'Delete'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Delete'));
+    await tester.tap(confirmDelete());
     await tester.pumpAndSettle();
 
     final state = container.read(walletControllerProvider).value!;
@@ -134,7 +146,7 @@ void main() {
     await openSheet(tester);
     await tester.tap(find.widgetWithText(DangerButton, 'Delete'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Delete'));
+    await tester.tap(confirmDelete());
     // Bounded pumps, not pumpAndSettle: Get started runs ChainArc on a
     // repeating controller, so there is no frame at which the tree goes quiet.
     for (var i = 0; i < 20; i++) {
@@ -153,7 +165,7 @@ void main() {
     await openSheet(tester);
     await tester.tap(find.widgetWithText(DangerButton, 'Delete'));
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
+    await tester.tap(find.widgetWithText(SecondaryButton, 'Cancel'));
     await tester.pumpAndSettle();
 
     expect(

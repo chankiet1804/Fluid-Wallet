@@ -62,8 +62,10 @@ void main() {
     expect(finder, findsOneWidget);
   }
 
+  /// Taps the account pill through its avatar: the chain filter pill carries
+  /// the same chevron icon, so `find.byIcon` matches two widgets.
   Future<void> openAddWallet(WidgetTester tester) async {
-    await tester.tap(find.byIcon(Icons.keyboard_arrow_down));
+    await tester.tap(find.byType(WalletAvatar));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Add Wallet'));
     await tester.pumpAndSettle();
@@ -138,7 +140,7 @@ void main() {
       // Skipping the backup is the fast path out; the wallet already exists.
       await tester.tap(find.widgetWithText(SecondaryButton, 'Back up later'));
       await tester.pumpAndSettle();
-      await tester.tap(find.widgetWithText(TextButton, 'Skip for now'));
+      await tester.tap(find.widgetWithText(SecondaryButton, 'Skip for now'));
       await tester.pumpAndSettle();
 
       expect(find.byType(PortfolioScreen), findsOneWidget);
