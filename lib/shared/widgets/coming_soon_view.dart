@@ -113,10 +113,7 @@ class _HourglassState extends State<_Hourglass>
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final size = Size(
-      widget.size * _Hourglass._widthRatio,
-      widget.size,
-    );
+    final size = Size(widget.size * _Hourglass._widthRatio, widget.size);
 
     return RepaintBoundary(
       child: AnimatedBuilder(
@@ -138,8 +135,7 @@ class _HourglassState extends State<_Hourglass>
               ? 0.0
               : math.pi *
                     Curves.easeInOutCubic.transform(
-                      (t - _Hourglass._flipStart) /
-                          (1 - _Hourglass._flipStart),
+                      (t - _Hourglass._flipStart) / (1 - _Hourglass._flipStart),
                     );
 
           return Transform.rotate(
@@ -191,6 +187,7 @@ class _HourglassPainter extends CustomPainter {
 
   // All geometry is expressed as a fraction of the box so the widget scales.
   static const _capHeight = 0.07;
+
   /// Held clear of the posts so the glass edge reads as its own line instead
   /// of merging into the frame.
   static const _bulbHalfWidth = 0.37;
@@ -298,10 +295,7 @@ class _HourglassPainter extends CustomPainter {
       framePaint,
     );
     canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, h - capH, w, capH),
-        capRadius,
-      ),
+      RRect.fromRectAndRadius(Rect.fromLTWH(0, h - capH, w, capH), capRadius),
       framePaint,
     );
   }

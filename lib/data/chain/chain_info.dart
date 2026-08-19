@@ -103,7 +103,8 @@ class ChainInfo {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) || (other is ChainInfo && other.chainId == chainId);
+      identical(this, other) ||
+      (other is ChainInfo && other.chainId == chainId);
 
   @override
   int get hashCode => chainId.hashCode;

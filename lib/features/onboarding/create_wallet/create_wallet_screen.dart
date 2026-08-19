@@ -39,14 +39,14 @@ class _CreateWalletScreenState extends ConsumerState<CreateWalletScreen> {
 
       final walletId = ref.read(currentWalletProvider)?.id;
       if (walletId == null) {
-        setState(() => _error = 'Wallet was created but could not be read back.');
+        setState(
+          () => _error = 'Wallet was created but could not be read back.',
+        );
         return;
       }
       // Straight into backup — a wallet nobody has written down is a wallet
       // one lost phone away from being gone.
-      context.go(
-        AppRoute.backupPhrasePath(walletId, fromApp: widget.fromApp),
-      );
+      context.go(AppRoute.backupPhrasePath(walletId, fromApp: widget.fromApp));
     } catch (_) {
       if (!mounted) return;
       setState(() => _error = 'Could not create the wallet. Please try again.');

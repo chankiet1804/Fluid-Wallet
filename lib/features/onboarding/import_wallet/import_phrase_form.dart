@@ -185,7 +185,11 @@ class _StatusLine extends StatelessWidget {
     final colors = context.colors;
 
     if (error != null) {
-      return _Line(icon: Icons.error_outline, color: colors.danger, text: error!);
+      return _Line(
+        icon: Icons.error_outline,
+        color: colors.danger,
+        text: error!,
+      );
     }
     if (!touched) return const SizedBox(height: 20);
     if (valid) {

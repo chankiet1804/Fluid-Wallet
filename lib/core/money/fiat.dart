@@ -24,10 +24,8 @@ abstract class FiatPrice with _$FiatPrice {
 /// price can never be summed into a portfolio total by accident.
 @freezed
 abstract class FiatValue with _$FiatValue {
-  const factory FiatValue({
-    required String currency,
-    required Decimal value,
-  }) = _FiatValue;
+  const factory FiatValue({required String currency, required Decimal value}) =
+      _FiatValue;
 
   const FiatValue._();
 

@@ -83,7 +83,10 @@ void main() {
 
     test('no chain lists the same address twice', () {
       for (final chain in registry.chains) {
-        final refs = registry.tokensOf(chain.chainId).map((t) => t.ref).toList();
+        final refs = registry
+            .tokensOf(chain.chainId)
+            .map((t) => t.ref)
+            .toList();
         expect(refs.toSet().length, refs.length, reason: chain.name);
       }
     });

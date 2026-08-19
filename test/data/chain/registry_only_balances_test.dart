@@ -48,10 +48,8 @@ void main() {
       overrides: [
         chainRegistryProvider.overrideWithValue(registry),
         rawBalancesProvider(address).overrideWith(
-          (ref) => RawBalanceResult(
-            balances: balances,
-            fetchedAt: DateTime(2026),
-          ),
+          (ref) =>
+              RawBalanceResult(balances: balances, fetchedAt: DateTime(2026)),
         ),
         tokenMetadataRepositoryProvider.overrideWithValue(
           _ThrowingMetadataRepository(),
@@ -97,20 +95,23 @@ void main() {
     expect(queries.single.refs, [native.ref]);
   });
 
-  test('dropping an unlisted contract does not mark the snapshot partial', () async {
-    // Registry membership is a definition, not a failed fetch: the total stays
-    // confident. Only a chain failure or a missing price may downgrade it.
-    final container = containerWith({
-      native.ref: BigInt.from(1000000000000000000),
-      unlisted: BigInt.from(999),
-    });
+  test(
+    'dropping an unlisted contract does not mark the snapshot partial',
+    () async {
+      // Registry membership is a definition, not a failed fetch: the total stays
+      // confident. Only a chain failure or a missing price may downgrade it.
+      final container = containerWith({
+        native.ref: BigInt.from(1000000000000000000),
+        unlisted: BigInt.from(999),
+      });
 
-    final snapshot = await container.read(portfolioProvider(address).future);
+      final snapshot = await container.read(portfolioProvider(address).future);
 
-    expect(snapshot.unresolved, isEmpty);
-    expect(snapshot.balances, hasLength(1));
-    // Native has no price in this container, so incompleteness here comes from
-    // `unpricedCount` alone — never from the dropped contract.
-    expect(snapshot.unpricedCount, 1);
-  });
+      expect(snapshot.unresolved, isEmpty);
+      expect(snapshot.balances, hasLength(1));
+      // Native has no price in this container, so incompleteness here comes from
+      // `unpricedCount` alone — never from the dropped contract.
+      expect(snapshot.unpricedCount, 1);
+    },
+  );
 }

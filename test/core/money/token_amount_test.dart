@@ -21,7 +21,10 @@ void main() {
       final amount = TokenAmount(raw: max, decimals: 18);
       expect(amount.raw, max);
       // Reconstructing the integer from the decimal must give back every digit.
-      expect((amount.decimal * Decimal.ten.pow(18).toDecimal()).toBigInt(), max);
+      expect(
+        (amount.decimal * Decimal.ten.pow(18).toDecimal()).toBigInt(),
+        max,
+      );
     });
 
     test('a 6-decimal token is not scaled like an 18-decimal one', () {
@@ -40,8 +43,14 @@ void main() {
 
   group('TokenAmount.tryParse', () {
     test('accepts plain and comma decimal separators', () {
-      expect(TokenAmount.tryParse('1.5', decimals: 6)!.raw, BigInt.from(1500000));
-      expect(TokenAmount.tryParse('1,5', decimals: 6)!.raw, BigInt.from(1500000));
+      expect(
+        TokenAmount.tryParse('1.5', decimals: 6)!.raw,
+        BigInt.from(1500000),
+      );
+      expect(
+        TokenAmount.tryParse('1,5', decimals: 6)!.raw,
+        BigInt.from(1500000),
+      );
       expect(TokenAmount.tryParse('.5', decimals: 6)!.raw, BigInt.from(500000));
       expect(TokenAmount.tryParse('7', decimals: 0)!.raw, BigInt.from(7));
     });

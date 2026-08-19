@@ -41,8 +41,7 @@ class RetryInterceptor extends Interceptor {
 
     await Future<void>.delayed(_delayFor(attempt, err.response));
 
-    final options = err.requestOptions
-      ..extra[_attemptKey] = attempt + 1;
+    final options = err.requestOptions..extra[_attemptKey] = attempt + 1;
 
     try {
       handler.resolve(await dio.fetch<dynamic>(options));

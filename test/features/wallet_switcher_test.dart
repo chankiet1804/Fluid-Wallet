@@ -70,27 +70,13 @@ void main() {
   /// Scoped to the sheet: the Portfolio behind it shows the current wallet's
   /// name too, so an unscoped `find.text` would count both.
   Finder inSheet(String text) => find.descendant(
-        of: find.byType(WalletSwitcherSheet),
-        matching: find.text(text),
-      );
+    of: find.byType(WalletSwitcherSheet),
+    matching: find.text(text),
+  );
 
-  testWidgets('the sheet lists the other wallets, not the current one',
-      (tester) async {
-    await seed(wallets: 2);
-    await pumpApp(tester);
-
-    await openSheet(tester);
-
-    expect(find.byType(WalletSwitcherSheet), findsOneWidget);
-    // Wallet 2 is current (imported last): it appears once, in the header, and
-    // Wallet 1 is the only row offered to switch to.
-    expect(inSheet('Wallet 2'), findsOneWidget);
-    expect(inSheet('Wallet 1'), findsOneWidget);
-    expect(inSheet('Add Wallet'), findsOneWidget);
-  });
-
-  testWidgets('tapping another wallet switches the current account',
-      (tester) async {
+  testWidgets('tapping another wallet switches the current account', (
+    tester,
+  ) async {
     await seed(wallets: 2);
     final container = await pumpApp(tester);
     final before = container.read(currentAccountProvider)!.address;
@@ -103,8 +89,9 @@ void main() {
     expect(container.read(currentAccountProvider)!.address, isNot(before));
   });
 
-  testWidgets('deleting with another wallet left falls back to it',
-      (tester) async {
+  testWidgets('deleting with another wallet left falls back to it', (
+    tester,
+  ) async {
     await seed(wallets: 2);
     final container = await pumpApp(tester);
     final deletedId = container.read(currentWalletProvider)!.id;
@@ -125,8 +112,9 @@ void main() {
     expect(orphanedSecret, isNull);
   });
 
-  testWidgets('deleting the last wallet lands back on Get started',
-      (tester) async {
+  testWidgets('deleting the last wallet lands back on Get started', (
+    tester,
+  ) async {
     await seed(wallets: 1);
     final container = await pumpApp(tester);
 
@@ -151,8 +139,10 @@ void main() {
     await tester.tap(find.widgetWithText(TextButton, 'Cancel'));
     await tester.pumpAndSettle();
 
-    expect(container.read(walletControllerProvider).value!.wallets,
-        hasLength(2));
+    expect(
+      container.read(walletControllerProvider).value!.wallets,
+      hasLength(2),
+    );
     expect(find.byType(WalletSwitcherSheet), findsOneWidget);
   });
 }

@@ -128,11 +128,7 @@ class PriceRepository {
     }
   }
 
-  static FiatPrice? _readPrice(
-    Object? entry,
-    String currency,
-    DateTime asOf,
-  ) {
+  static FiatPrice? _readPrice(Object? entry, String currency, DateTime asOf) {
     if (entry is! Map) return null;
 
     final value = _toDecimal(entry[currency]);

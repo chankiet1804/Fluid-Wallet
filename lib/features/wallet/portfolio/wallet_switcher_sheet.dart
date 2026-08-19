@@ -255,7 +255,11 @@ class _AddressLine extends StatelessWidget {
           borderRadius: BorderRadius.circular(AppDimens.radiusSm),
           child: Padding(
             padding: const EdgeInsets.all(AppDimens.space4),
-            child: Icon(Icons.copy_outlined, size: 14, color: colors.textSecondary),
+            child: Icon(
+              Icons.copy_outlined,
+              size: 14,
+              color: colors.textSecondary,
+            ),
           ),
         ),
       ],

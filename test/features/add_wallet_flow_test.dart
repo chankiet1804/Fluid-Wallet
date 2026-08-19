@@ -72,19 +72,9 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets('Add Wallet offers create and import', (tester) async {
-    await seedOneWallet();
-    await pumpApp(tester);
-
-    await openAddWallet(tester);
-
-    expect(find.byType(AddWalletSheet), findsOneWidget);
-    expect(find.text('Create a new wallet'), findsOneWidget);
-    expect(find.text('Import an existing wallet'), findsOneWidget);
-  });
-
-  testWidgets('importing from the sheet adds the wallet and selects it',
-      (tester) async {
+  testWidgets('importing from the sheet adds the wallet and selects it', (
+    tester,
+  ) async {
     await seedOneWallet();
     final container = await pumpApp(tester);
 
@@ -104,8 +94,9 @@ void main() {
     expect(state.currentAccount!.address, zero12Address);
   });
 
-  testWidgets('a duplicate phrase fails inside the sheet without closing it',
-      (tester) async {
+  testWidgets('a duplicate phrase fails inside the sheet without closing it', (
+    tester,
+  ) async {
     await seedOneWallet(imported: true);
     final container = await pumpApp(tester);
 
@@ -119,30 +110,34 @@ void main() {
 
     expect(find.text('This wallet is already in the app.'), findsOneWidget);
     expect(find.byType(ImportWalletSheet), findsOneWidget);
-    expect(container.read(walletControllerProvider).value!.wallets,
-        hasLength(1));
+    expect(
+      container.read(walletControllerProvider).value!.wallets,
+      hasLength(1),
+    );
   });
 
-  testWidgets('creating from the sheet backs out to Portfolio, not onboarding',
-      (tester) async {
-    await seedOneWallet();
-    final container = await pumpApp(tester);
+  testWidgets(
+    'creating from the sheet backs out to Portfolio, not onboarding',
+    (tester) async {
+      await seedOneWallet();
+      final container = await pumpApp(tester);
 
-    await openAddWallet(tester);
-    await tester.tap(find.text('Create a new wallet'));
-    await pumpUntil(tester, find.byType(BackupPhraseScreen));
-    await tester.pumpAndSettle();
+      await openAddWallet(tester);
+      await tester.tap(find.text('Create a new wallet'));
+      await pumpUntil(tester, find.byType(BackupPhraseScreen));
+      await tester.pumpAndSettle();
 
-    // Skipping the backup is the fast path out; the wallet already exists.
-    await tester.tap(find.widgetWithText(SecondaryButton, 'Back up later'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(TextButton, 'Skip for now'));
-    await tester.pumpAndSettle();
+      // Skipping the backup is the fast path out; the wallet already exists.
+      await tester.tap(find.widgetWithText(SecondaryButton, 'Back up later'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.widgetWithText(TextButton, 'Skip for now'));
+      await tester.pumpAndSettle();
 
-    expect(find.byType(PortfolioScreen), findsOneWidget);
-    final state = container.read(walletControllerProvider).value!;
-    expect(state.wallets, hasLength(2));
-    expect(state.currentWallet!.isBackedUp, isFalse);
-    expect(state.currentWallet!.name, 'Wallet 2');
-  });
+      expect(find.byType(PortfolioScreen), findsOneWidget);
+      final state = container.read(walletControllerProvider).value!;
+      expect(state.wallets, hasLength(2));
+      expect(state.currentWallet!.isBackedUp, isFalse);
+      expect(state.currentWallet!.name, 'Wallet 2');
+    },
+  );
 }

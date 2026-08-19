@@ -25,7 +25,12 @@ void main() {
     );
   }
 
-  TokenBalance balanceOf(int chainId, String symbol, String amount, String? usd) {
+  TokenBalance balanceOf(
+    int chainId,
+    String symbol,
+    String amount,
+    String? usd,
+  ) {
     final token = registry
         .tokensOf(chainId)
         .firstWhere((t) => t.symbol == symbol);
@@ -100,8 +105,9 @@ void main() {
 
   testWidgets('an unresolved asset shows no amount at all', (tester) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(
+      MaterialApp(
+        theme: AppTheme.dark,
+        home: const Scaffold(
           body: UnresolvedRow(
             address: '0x1111111111111111111111111111111111111111',
           ),
@@ -114,9 +120,7 @@ void main() {
   });
 
   testWidgets('the registry icon wins over the bundled asset', (tester) async {
-    final token = registry
-        .tokensOf(8453)
-        .firstWhere((t) => t.symbol == 'USDC');
+    final token = registry.tokensOf(8453).firstWhere((t) => t.symbol == 'USDC');
     // Guards the premise: USDC is one of the symbols that ships an SVG, so if
     // the URL renders it can only be because the file outranks the asset.
     expect(token.iconUrl, isNotNull);
@@ -164,9 +168,7 @@ void main() {
   });
 
   testWidgets('a dust balance never renders as 0', (tester) async {
-    final token = registry
-        .tokensOf(8453)
-        .firstWhere((t) => t.isNative);
+    final token = registry.tokensOf(8453).firstWhere((t) => t.isNative);
 
     await pump(
       tester,

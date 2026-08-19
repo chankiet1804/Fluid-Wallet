@@ -167,9 +167,13 @@ class _PhraseGrid extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: _Column(words: words, start: 0, end: half)),
+        Expanded(
+          child: _Column(words: words, start: 0, end: half),
+        ),
         const SizedBox(width: AppDimens.space16),
-        Expanded(child: _Column(words: words, start: half, end: words.length)),
+        Expanded(
+          child: _Column(words: words, start: half, end: words.length),
+        ),
       ],
     );
   }

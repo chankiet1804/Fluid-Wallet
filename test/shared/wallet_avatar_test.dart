@@ -47,7 +47,8 @@ void main() {
       for (var y = 0; y < Blockies.gridSize; y++) {
         for (var x = 0; x < Blockies.gridSize ~/ 2; x++) {
           final left = cells[y * Blockies.gridSize + x];
-          final right = cells[y * Blockies.gridSize + (Blockies.gridSize - 1 - x)];
+          final right =
+              cells[y * Blockies.gridSize + (Blockies.gridSize - 1 - x)];
           expect(right, left, reason: 'row $y column $x is not mirrored');
         }
       }
@@ -120,10 +121,7 @@ void main() {
         ),
       );
 
-      expect(
-        tester.getSize(find.byType(WalletAvatar)),
-        const Size.square(56),
-      );
+      expect(tester.getSize(find.byType(WalletAvatar)), const Size.square(56));
     });
   });
 }

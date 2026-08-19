@@ -130,10 +130,11 @@ void main() {
 
   test('pageKey is returned so the caller can continue, or stop', () {
     expect(
-      BalanceRepository.parsePage({
-        'tokens': const [],
-        'pageKey': 'next',
-      }, bySlug, {}),
+      BalanceRepository.parsePage(
+        {'tokens': const [], 'pageKey': 'next'},
+        bySlug,
+        {},
+      ),
       'next',
     );
     expect(

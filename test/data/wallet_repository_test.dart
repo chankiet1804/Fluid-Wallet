@@ -58,8 +58,7 @@ void main() {
     test('state survives a reload', () async {
       final created = await repo.createWallet();
       final reloaded = await repo.load();
-      expect(reloaded.currentAccount!.address,
-          created.currentAccount!.address);
+      expect(reloaded.currentAccount!.address, created.currentAccount!.address);
     });
   });
 
@@ -86,23 +85,25 @@ void main() {
       expect(state.wallets.map((w) => w.name), ['Wallet 2', 'Wallet 3']);
     });
 
-    test('does not collide with wallets stored before naming existed',
-        () async {
-      // Such a wallet has a null name and displays as "Wallet 1" by position.
-      final legacy = await repo.createWallet();
-      await storage.write(
-        key: 'wallets_meta_v1',
-        value: _encode(
-          legacy.copyWith(
-            wallets: [legacy.wallets.single.copyWith(name: null)],
+    test(
+      'does not collide with wallets stored before naming existed',
+      () async {
+        // Such a wallet has a null name and displays as "Wallet 1" by position.
+        final legacy = await repo.createWallet();
+        await storage.write(
+          key: 'wallets_meta_v1',
+          value: _encode(
+            legacy.copyWith(
+              wallets: [legacy.wallets.single.copyWith(name: null)],
+            ),
           ),
-        ),
-      );
+        );
 
-      final state = await repo.createWallet();
+        final state = await repo.createWallet();
 
-      expect(state.wallets.last.name, 'Wallet 2');
-    });
+        expect(state.wallets.last.name, 'Wallet 2');
+      },
+    );
   });
 
   group('importWallet', () {
@@ -291,10 +292,7 @@ Future<void> _injectAccount(
           wallet,
     ],
   );
-  await storage.write(
-    key: 'wallets_meta_v1',
-    value: _encode(updated),
-  );
+  await storage.write(key: 'wallets_meta_v1', value: _encode(updated));
 }
 
 String _encode(WalletState state) => jsonEncode(state.toJson());

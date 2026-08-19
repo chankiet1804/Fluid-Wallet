@@ -11,10 +11,7 @@ final secureStorageProvider = Provider<FlutterSecureStorage>(
 
 final walletRepositoryProvider = Provider<WalletRepository>((ref) {
   final storage = ref.watch(secureStorageProvider);
-  return WalletRepository(
-    secureStore: SecureStore(storage),
-    storage: storage,
-  );
+  return WalletRepository(secureStore: SecureStore(storage), storage: storage);
 });
 
 /// The wallet list plus which account is selected.

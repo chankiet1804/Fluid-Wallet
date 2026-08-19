@@ -169,8 +169,11 @@ class AppColors extends ThemeExtension<AppColors> {
       qrSurface: Color.lerp(qrSurface, other.qrSurface, t)!,
       onQrSurface: Color.lerp(onQrSurface, other.onQrSurface, t)!,
       heroGlowPrimary: Color.lerp(heroGlowPrimary, other.heroGlowPrimary, t)!,
-      heroGlowSecondary:
-          Color.lerp(heroGlowSecondary, other.heroGlowSecondary, t)!,
+      heroGlowSecondary: Color.lerp(
+        heroGlowSecondary,
+        other.heroGlowSecondary,
+        t,
+      )!,
     );
   }
 }

@@ -19,8 +19,9 @@ void main() {
       expect(scheme.surface, AppColors.dark.surface);
     });
 
-    testWidgets('context accessors resolve the registered tokens',
-        (tester) async {
+    testWidgets('context accessors resolve the registered tokens', (
+      tester,
+    ) async {
       late AppColors colors;
       late AppTypography typo;
 

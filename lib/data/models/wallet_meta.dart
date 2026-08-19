@@ -16,6 +16,7 @@ abstract class AccountMeta with _$AccountMeta {
   const factory AccountMeta({
     required String id,
     required int index,
+
     /// EIP-55 checksummed.
     required String address,
     String? name,

@@ -35,9 +35,8 @@ class AssetRef {
 
   /// CAIP-19. Not a key today — it is here so that adding a non-EVM namespace
   /// later is a promotion of this getter rather than a redesign.
-  String get caip19 => isNative
-      ? 'eip155:$chainId/slip44:60'
-      : 'eip155:$chainId/erc20:$address';
+  String get caip19 =>
+      isNative ? 'eip155:$chainId/slip44:60' : 'eip155:$chainId/erc20:$address';
 
   @override
   bool operator ==(Object other) =>
