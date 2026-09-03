@@ -211,15 +211,23 @@ class _ActionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Every action is inert for now — the screens they open land in later
-    // phases, and a button that moves funds is not something to stub.
-    return const Row(
+    // Receive is live; the rest stay inert until their screens land in later
+    // phases, because a button that moves funds is not something to stub.
+    return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        CircleIconButton(icon: Icons.arrow_upward, label: 'Send'),
-        CircleIconButton(icon: Icons.arrow_downward, label: 'Receive'),
-        CircleIconButton(icon: Icons.grid_view_rounded, label: 'Dashboard'),
-        CircleIconButton(icon: Icons.more_horiz, label: 'More'),
+        const CircleIconButton(icon: Icons.arrow_upward, label: 'Send'),
+        CircleIconButton(
+          icon: Icons.arrow_downward,
+          label: 'Receive',
+          // push, not go: Back returns to the tab this was opened from.
+          onPressed: () => context.push(AppRoute.receiveNetwork),
+        ),
+        const CircleIconButton(
+          icon: Icons.grid_view_rounded,
+          label: 'Dashboard',
+        ),
+        const CircleIconButton(icon: Icons.more_horiz, label: 'More'),
       ],
     );
   }

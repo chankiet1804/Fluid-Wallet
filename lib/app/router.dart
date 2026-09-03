@@ -12,6 +12,7 @@ import '../features/onboarding/verify_phrase/verify_phrase_screen.dart';
 import '../features/borrow/borrow_screen.dart';
 import '../features/lending/lending_screen.dart';
 import '../features/onboarding/wallet_ready/wallet_ready_screen.dart';
+import '../features/receive/receive.dart';
 import '../features/settings/settings_screen.dart';
 import '../features/statistics/statistics_screen.dart';
 import '../features/wallet/main_shell.dart';
@@ -41,6 +42,14 @@ abstract final class AppRoute {
   /// back button and expects to return to the tab it was opened from.
   static const settings = '/settings';
 
+  /// Receiving is two steps, both pushed over the shell. The address is the
+  /// same on every chain, so picking a network changes only which one the QR
+  /// screen warns about — but that is the thing worth being explicit about.
+  static const receiveNetwork = '/receive';
+  static const receiveQr = '/receive/qr';
+
+  static String receiveQrPath(int chainId) => '$receiveQr?chainId=$chainId';
+
   /// Locations that render nothing without a wallet, so entering one without
   /// a wallet must bounce to onboarding rather than show empty chrome.
   static const needsWallet = {
@@ -49,6 +58,8 @@ abstract final class AppRoute {
     lending,
     statistics,
     settings,
+    receiveNetwork,
+    receiveQr,
     walletReady,
   };
 
@@ -195,6 +206,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.settings,
         builder: (context, state) => const SettingsScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.receiveNetwork,
+        builder: (context, state) => const ReceiveNetworkScreen(),
+      ),
+      GoRoute(
+        path: AppRoute.receiveQr,
+        // Unparseable falls through to 0, which no chain has: the screen says
+        // the network is unsupported rather than crashing on a bad deep link.
+        builder: (context, state) => ReceiveQrScreen(
+          chainId: int.tryParse(state.uri.queryParameters['chainId'] ?? '') ?? 0,
+        ),
       ),
       if (kDebugMode)
         GoRoute(
