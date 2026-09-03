@@ -97,4 +97,27 @@ void main() {
       expect(AppFormat.shortAddress('0x1388'), '0x1388');
     });
   });
+
+  group('AppFormat.addressLines', () {
+    const address = '0x1388a1d3e0c2b4f5a6d7e8f9a0b1c2d3e4f547cf';
+
+    test('splits an address into two even halves', () {
+      final lines = AppFormat.addressLines(address);
+      expect(lines, hasLength(2));
+      expect(lines.first.length, 21);
+      expect(lines.last.length, 21);
+    });
+
+    // The whole point of splitting is that nothing is hidden: an address that
+    // loses a character on screen is worse than one that is openly shortened.
+    test('loses nothing when rejoined', () {
+      expect(AppFormat.addressLines(address).join(), address);
+      expect(AppFormat.addressLines(address, lines: 3).join(), address);
+    });
+
+    test('leaves a value too short to split alone', () {
+      expect(AppFormat.addressLines('0x'), ['0x']);
+      expect(AppFormat.addressLines(address, lines: 1), [address]);
+    });
+  });
 }

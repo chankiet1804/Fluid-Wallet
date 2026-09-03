@@ -54,6 +54,10 @@ dependencies:
   # URLs. Bundled SVGs still win when a symbol has one.
   cached_network_image: ^3.4.1
 
+  # QR of the receive address. Not on the key path, so a caret like the other UI
+  # packages; the crypto group below stays pinned exactly.
+  qr_flutter: ^4.1.0
+
   # Anything on the path of the mnemonic or a derived key is pinned exactly, not
   # with a caret: blockchain_utils' publisher is unverified and web3dart is a
   # hand-over from an archived repo. Read the changelog diff before any bump.
