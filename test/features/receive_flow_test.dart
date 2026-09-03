@@ -119,10 +119,7 @@ void main() {
       await tester.pumpWidget(
         UncontrolledProviderScope(
           container: c,
-          child: MaterialApp.router(
-            theme: AppTheme.dark,
-            routerConfig: router,
-          ),
+          child: MaterialApp.router(theme: AppTheme.dark, routerConfig: router),
         ),
       );
       await tester.pump();
@@ -160,10 +157,7 @@ void main() {
     testWidgets('names the picked network in the warning', (tester) async {
       await pump(tester, const ReceiveQrScreen(chainId: polygon));
 
-      expect(
-        find.textContaining(registry.chain(polygon)!.name),
-        findsWidgets,
-      );
+      expect(find.textContaining(registry.chain(polygon)!.name), findsWidgets);
       expect(find.textContaining(registry.chain(base)!.name), findsNothing);
     });
 

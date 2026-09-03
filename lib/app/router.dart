@@ -216,7 +216,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         // Unparseable falls through to 0, which no chain has: the screen says
         // the network is unsupported rather than crashing on a bad deep link.
         builder: (context, state) => ReceiveQrScreen(
-          chainId: int.tryParse(state.uri.queryParameters['chainId'] ?? '') ?? 0,
+          chainId:
+              int.tryParse(state.uri.queryParameters['chainId'] ?? '') ?? 0,
         ),
       ),
       if (kDebugMode)
