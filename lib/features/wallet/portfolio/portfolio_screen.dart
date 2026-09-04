@@ -190,7 +190,10 @@ class _AddressRow extends StatelessWidget {
         // An address is public — unlike the recovery phrase, copying it is
         // exactly what it is for.
         InkWell(
-          onTap: () => Clipboard.setData(ClipboardData(text: address)),
+          onTap: () => {
+            Clipboard.setData(ClipboardData(text: address)),
+            AppToast.success(title: 'Copied Successfully'),
+          },
           borderRadius: BorderRadius.circular(AppDimens.radiusSm),
           child: Padding(
             padding: const EdgeInsets.all(AppDimens.space4),

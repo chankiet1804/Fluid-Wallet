@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:toastification/toastification.dart';
 
 import 'app/router.dart';
 import 'app/theme/app_theme.dart';
@@ -34,13 +35,27 @@ class FluidWalletApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp.router(
-      title: 'Fluid Wallet',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
-      // To eyeball the design tokens, temporarily swap this for a MaterialApp
-      // with `DesignGallery` from app/theme as its home.
-      routerConfig: ref.watch(routerProvider),
+    // Above MaterialApp, not inside its `builder`: the wrapper reaches *down*
+    // for the Navigator to borrow its overlay, so it has to be an ancestor.
+    // The toast itself is still built inside that overlay, below the theme, so
+    // `context.colors` resolves there.
+    //
+    // Full-width toasts on a phone: the default item width is a fixed 400,
+    // which is wider than a 360dp screen. Infinity is clamped to the screen by
+    // the enclosing constraints, and AppToast adds its own side gutter.
+    return ToastificationWrapper(
+      config: const ToastificationConfig(
+        alignment: Alignment.topCenter,
+        itemWidth: double.infinity,
+      ),
+      child: MaterialApp.router(
+        title: 'Fluid Wallet',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.dark,
+        // To eyeball the design tokens, temporarily swap this for a MaterialApp
+        // with `DesignGallery` from app/theme as its home.
+        routerConfig: ref.watch(routerProvider),
+      ),
     );
   }
 }

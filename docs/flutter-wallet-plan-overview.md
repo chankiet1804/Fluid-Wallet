@@ -204,6 +204,13 @@ Kiểm tra bằng mắt: `DesignGallery` (`lib/app/theme/design_gallery.dart`) r
 | Hỏi xác nhận 2 nút (xoá ví, gửi tiền, bỏ qua backup) | `showAppConfirmSheet(...) → Future<bool>` | `lib/shared/widgets/app_action_sheet.dart` |
 | Thông báo / kết quả, 1–2 nút, cần giá trị trả về khác `bool` | `showAppActionSheet<T>(...)` | cùng file |
 | Sheet có nội dung riêng (danh sách, form) | `showAppSheet` + `AppSheet` shell | `lib/shared/widgets/app_sheet.dart` |
+| **Phản hồi phù du, không hậu quả tiền bạc** | `AppToast.success/error(...)` | `lib/shared/widgets/app_toast.dart` |
+
+**Ranh giới toast / sheet (bổ sung 2026-09-04).** Toast là kênh duy nhất được phép tự tắt, và chỉ dùng cho việc đã rồi, không có tiền đi kèm: đã copy địa chỉ, đã lưu cài đặt, không tải được giá, lỗi mạng lúc refresh. Toast có đúng hai `type` — `success` và `error` — cố ý không có `warning`, vì cảnh báo là thứ người dùng phải quyết định.
+
+**Vẫn bắt buộc là sheet:** mọi xác nhận (gửi tiền, xoá ví, bỏ qua backup), mọi kết quả giao dịch (đã gửi / confirmed / reverted), mọi cảnh báo trước khi ký (địa chỉ không checksum, price impact cao). Một giao dịch thất bại **không bao giờ** chỉ là một dải chữ tự biến mất sau 3 giây — nếu nghi ngờ nên dùng cái nào, dùng sheet.
+
+Toast dựng trên `toastification` nhưng chỉ qua `showCustom` với widget của app; không dùng `ToastificationStyle` dựng sẵn của package (nó áp màu Material riêng, vi phạm 4.5). `ToastificationWrapper` bọc **ngoài** `MaterialApp` trong `main.dart` — nó tìm xuống dưới để mượn overlay của `Navigator`, nên đặt vào `MaterialApp.builder` sẽ không tìm thấy.
 
 **Cấm trong `lib/features/`:** `AlertDialog`, `CupertinoAlertDialog`, `SnackBar`, `showDialog`, và gọi thẳng `showModalBottomSheet` (bỏ qua `showAppSheet` là lệch bo góc + cấu hình safe area).
 

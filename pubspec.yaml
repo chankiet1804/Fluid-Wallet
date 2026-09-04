@@ -58,6 +58,10 @@ dependencies:
   # packages; the crypto group below stays pinned exactly.
   qr_flutter: ^4.1.0
 
+  # In-app toast. Ephemeral feedback only — confirmations and transaction
+  # results stay bottom sheets, see the plan overview §4.6.
+  toastification: 3.2.0
+
   # Anything on the path of the mnemonic or a derived key is pinned exactly, not
   # with a caret: blockchain_utils' publisher is unverified and web3dart is a
   # hand-over from an archived repo. Read the changelog diff before any bump.

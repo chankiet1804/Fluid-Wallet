@@ -74,6 +74,7 @@ class _RecoveryPhraseSheetState extends ConsumerState<RecoveryPhraseSheet> {
     final phrase = words.join(' ');
 
     await Clipboard.setData(ClipboardData(text: phrase));
+    AppToast.success(title: 'Copied Successfully');
     await ref
         .read(walletControllerProvider.notifier)
         .markBackedUp(widget.walletId);

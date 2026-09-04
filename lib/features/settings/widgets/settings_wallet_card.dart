@@ -85,7 +85,10 @@ class _AddressLine extends StatelessWidget {
         ),
         const SizedBox(width: AppDimens.space4),
         InkWell(
-          onTap: () => Clipboard.setData(ClipboardData(text: address)),
+          onTap: () => {
+            Clipboard.setData(ClipboardData(text: address)),
+            AppToast.success(title: 'Copied Successfully'),
+          },
           borderRadius: BorderRadius.circular(AppDimens.radiusSm),
           child: Padding(
             padding: const EdgeInsets.all(AppDimens.space4),
