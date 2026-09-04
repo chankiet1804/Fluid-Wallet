@@ -253,7 +253,7 @@ void main() {
 
       // The toast animates in from the overlay, so it needs its frames.
       await tester.pumpAndSettle();
-      expect(find.text('Address copied'), findsOneWidget);
+      expect(find.text('Copied Successfully'), findsOneWidget);
 
       // Also proves the timer does not outlive the widget, which would fail
       // the test the moment it fired.
@@ -264,7 +264,7 @@ void main() {
       // when the tree is torn down.
       await tester.pump(const Duration(seconds: 1));
       await tester.pumpAndSettle();
-      expect(find.text('Address copied'), findsNothing);
+      expect(find.text('Copied Successfully'), findsNothing);
     });
   });
 }
