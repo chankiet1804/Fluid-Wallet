@@ -97,7 +97,11 @@ void main() {
     AppToast.success(title: 'Address copied');
     await tester.pumpAndSettle();
 
-    await tester.fling(find.text('Address copied'), const Offset(0, -300), 1000);
+    await tester.fling(
+      find.text('Address copied'),
+      const Offset(0, -300),
+      1000,
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Address copied'), findsNothing);

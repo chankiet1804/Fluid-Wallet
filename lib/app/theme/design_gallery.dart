@@ -316,7 +316,8 @@ class _ToastProof extends StatelessWidget {
           label: 'Error + long subtitle',
           onPressed: () => AppToast.error(
             title: 'Could not refresh prices',
-            subtitle: 'CoinGecko returned 429 Too Many Requests. '
+            subtitle:
+                'CoinGecko returned 429 Too Many Requests. '
                 'Showing the last known values.',
           ),
         ),
