@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../shared/widgets/app_button.dart';
+import '../../shared/widgets/app_toast.dart';
 import '../../shared/widgets/coming_soon_view.dart';
 import '../../shared/widgets/wallet_avatar.dart';
 import 'app_dimens.dart';
@@ -37,6 +39,9 @@ class DesignGallery extends StatelessWidget {
             SizedBox(height: AppDimens.space32),
             _Section('QR surface'),
             _QrSurfaceProof(),
+            SizedBox(height: AppDimens.space32),
+            _Section('Toast'),
+            _ToastProof(),
             SizedBox(height: AppDimens.space32),
             _Section('Brand mark'),
             _IconGrid(_IconGrid.brand),
@@ -278,6 +283,45 @@ class _QrSurfaceProof extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppDimens.radiusMd),
       ),
       child: Icon(Icons.qr_code_2, size: 88, color: context.colors.onQrSurface),
+    );
+  }
+}
+
+/// Fires the real toasts. Worth checking by eye that the strip stays opaque
+/// over the content behind it, clears the status bar, and that three in a row
+/// queue instead of stacking on top of each other.
+class _ToastProof extends StatelessWidget {
+  const _ToastProof();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SecondaryButton(
+          label: 'Success + subtitle',
+          onPressed: () => AppToast.success(
+            title: 'Address copied',
+            subtitle: AppFormat.shortAddress(
+              '0x2170Ed0880ac9A755fd29B2688956BD959F933F8',
+            ),
+          ),
+        ),
+        const SizedBox(height: AppDimens.space12),
+        SecondaryButton(
+          label: 'Success, title only',
+          onPressed: () => AppToast.success(title: 'Settings saved'),
+        ),
+        const SizedBox(height: AppDimens.space12),
+        SecondaryButton(
+          label: 'Error + long subtitle',
+          onPressed: () => AppToast.error(
+            title: 'Could not refresh prices',
+            subtitle:
+                'CoinGecko returned 429 Too Many Requests. '
+                'Showing the last known values.',
+          ),
+        ),
+      ],
     );
   }
 }

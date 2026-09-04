@@ -337,8 +337,8 @@ class _NetworkChip extends StatelessWidget {
 /// A pill, not a [PrimaryButton]: that one is full-width and 56dp tall, and it
 /// stays that way for the screens that move funds.
 ///
-/// The confirmation is the label swap — a sheet would be absurd for a copy,
-/// and a SnackBar is out (overview §4.6).
+/// The confirmation is the label swap on the button plus an [AppToast] — a
+/// sheet would be absurd for a copy, and a SnackBar is out (overview §4.6).
 class _CopyButton extends StatefulWidget {
   const _CopyButton({required this.address});
 
@@ -358,6 +358,10 @@ class _CopyButtonState extends State<_CopyButton> {
     // An address is public — unlike the recovery phrase, nothing here is
     // cleared from the clipboard afterwards. Pasting it is the whole point.
     Clipboard.setData(ClipboardData(text: widget.address));
+    AppToast.success(
+      title: 'Copied Successfully',
+      subtitle: AppFormat.shortAddress(widget.address),
+    );
     _timer?.cancel();
     setState(() => _copied = true);
     _timer = Timer(_feedback, () {

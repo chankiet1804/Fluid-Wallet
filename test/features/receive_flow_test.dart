@@ -11,6 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:toastification/toastification.dart';
 
 import '../support/fake_secure_storage.dart';
 import '../support/test_chain_registry.dart';
@@ -31,6 +32,9 @@ void main() {
   // isolate, and a `testWidgets` fake async zone never pumps the real event
   // loop, so the reply would never arrive.
   setUp(() async {
+    // The toastification singleton keeps a manager per alignment that outlives
+    // the widget tree; a leftover one points at an overlay that is already gone.
+    toastification.managers.clear();
     empty = FakeSecureStorage();
     funded = FakeSecureStorage();
     await WalletRepository(
@@ -63,7 +67,11 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: c,
-        child: MaterialApp(theme: AppTheme.dark, home: home),
+        // Same shape as main.dart: copying the address fires an AppToast, and
+        // the toast borrows the Navigator's overlay through this wrapper.
+        child: ToastificationWrapper(
+          child: MaterialApp(theme: AppTheme.dark, home: home),
+        ),
       ),
     );
     await tester.pump();
@@ -237,10 +245,20 @@ void main() {
       expect(copied, address);
       expect(find.text('Copied'), findsOneWidget);
 
+      // The toast animates in from the overlay, so it needs its frames.
+      await tester.pumpAndSettle();
+      expect(find.text('Copied Successfully'), findsOneWidget);
+
       // Also proves the timer does not outlive the widget, which would fail
       // the test the moment it fired.
       await tester.pump(const Duration(seconds: 2, milliseconds: 100));
       expect(find.text('Copy'), findsOneWidget);
+
+      // Run the toast's own auto-close out too, or its timer is still pending
+      // when the tree is torn down.
+      await tester.pump(const Duration(seconds: 1));
+      await tester.pumpAndSettle();
+      expect(find.text('Copied Successfully'), findsNothing);
     });
   });
 }
